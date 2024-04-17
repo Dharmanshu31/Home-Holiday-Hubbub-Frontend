@@ -1,9 +1,18 @@
 <template>
-  <v-container>
+  <v-container fluid class="tw-flex tw-justify-center tw-items-center">
     <v-row>
       <v-col>
         <v-card rounded="lg" max-width="500" class="mx-auto pa-12 pb-8">
-          <v-card-title class="headline"> SIGN UP </v-card-title>
+          <div class="tw-flex tw-justify-center tw-items-center">
+            <img
+              src="/home holiday hubbub.svg"
+              alt="Logo"
+              class="tw-w-14 tw-h-14"
+            />
+            <v-card-title class="headline tw-items-center tw-mt-3">
+              SIGN UP
+            </v-card-title>
+          </div>
           <v-card-text class="mb">
             <v-form @submit.prevent="submitForm">
               <CustomText
@@ -39,7 +48,7 @@
                 @click:append-inner="show = !show"
                 :type="show ? 'text' : 'password'"
                 variant="underlined"
-                error-color="white"
+                class="tw-mt-3"
               ></v-text-field>
 
               <CustomText
@@ -56,6 +65,7 @@
                 outlined
                 :rules="[required]"
                 variant="underlined"
+                class="tw-mt-3"
               ></v-select>
               <v-file-input
                 v-model="formData.photo"
@@ -65,15 +75,18 @@
                 variant="underlined"
                 @change="previewImage"
                 @click:clear="clearPhoto"
+                prepend-icon="mdi-camera"
+                class="tw-mt-3"
               >
               </v-file-input>
               <v-img
                 v-if="previewUrl"
+                :lazy-src="previewUrl"
                 :src="previewUrl"
-                class="mt-4"
-                max-height="200"
-                contain
-              ></v-img>
+                class="mt-4 rounded-circle tw-mx-auto"
+                cover
+              >
+              </v-img>
               <v-btn
                 color="success"
                 type="submit"
@@ -83,6 +96,14 @@
                 block
                 >SIGN UP</v-btn
               >
+              <div class="tw-text-center tw-mt-6">
+                <span>Already have an account? </span>
+                <router-link
+                  to="/login"
+                  class="tw-text-blue-400 hover:tw-underline"
+                  >Login</router-link
+                >
+              </div>
             </v-form>
           </v-card-text>
         </v-card>
@@ -165,14 +186,27 @@ const submitForm = () => {
 <style scoped>
 .v-container {
   background-color: transparent;
-  background-image: url("/assets/signUp.jpg");
+  background-image: url("/assets/camping_cat.jpg");
   background-size: cover;
-  padding: 24px;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
 }
 .v-card {
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 24px;
+  max-width: 100%;
+}
+.v-card-title {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.v-img {
+  width: 150px;
+  height: 150px;
 }
 </style>
