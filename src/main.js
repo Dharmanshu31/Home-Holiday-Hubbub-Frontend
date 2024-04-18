@@ -8,6 +8,8 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { router } from "./router/index";
+import TheHeader from "./layout/ui/TheHeader.vue";
+import TheFooter from "./layout/ui/TheFooter.vue";
 
 const vuetify = createVuetify({
   components,
@@ -17,4 +19,7 @@ const vuetify = createVuetify({
 const app = createApp(App);
 app.use(vuetify);
 app.use(router);
+app.component(TheHeader);
+app.component(TheFooter);
+
 app.mount("#app");
