@@ -14,7 +14,7 @@
             </v-card-title>
           </div>
           <v-card-text class="mb">
-            <v-form @submit.prevent="submitForm">
+            <v-form ref="form" @submit.prevent="submitForm">
               <CustomText
                 v-model="formData.firstName"
                 name="firstName"
@@ -90,7 +90,6 @@
               <v-btn
                 color="success"
                 type="submit"
-                :disabled="!formValid"
                 :loading="loading"
                 class="mt-4"
                 block
@@ -113,10 +112,11 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import CustomText from "../components/CustomText.vue";
 const show = ref(false);
 const loading = ref(false);
+const form = ref(null);
 const formData = ref({
   firstName: "",
   lastName: "",
@@ -126,22 +126,13 @@ const formData = ref({
   role: "",
   photo: null,
 });
-const formValid = computed(() => {
-  return (
-    !!formData.value.firstName &&
-    !!formData.value.lastName &&
-    !!formData.value.email &&
-    !!formData.value.password &&
-    !!formData.value.confirmPassword &&
-    !!formData.value.role &&
-    formData.value.password === formData.value.confirmPassword
-  );
-});
 
 const previewUrl = ref(null);
+
+//show priview image
 const previewImage = (e) => {
   const file = e.target.files[0];
-  if (file) {
+  if (e.target.files && e.target.files.length > 0) {
     const reader = new FileReader();
     reader.onload = (e) => {
       previewUrl.value = e.target.result;
@@ -150,21 +141,30 @@ const previewImage = (e) => {
   } else {
     previewUrl.value = null;
   }
-  formData.photo = null;
 };
+
+//clear priview Image
 const clearPhoto = () => {
-  formData.value.photo = null;
+  formData.photo = null;
   previewUrl.value = null;
 };
+
+//reqired validation
 const required = (value) => !!value || "Field is required !!";
+
+//email validation
 const emailRule = (value) =>
   /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
   "Email must be a valid email address";
+
+//password validation
 const passwordRule = (value) =>
   /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(
     value
   ) ||
   `Password must have at least 8 characters,including at least one number, one lowercase letter, one uppercase letter, and one special character`;
+
+//confirmPass Validation
 const confirmPasswordRul = (value) => {
   if (!formData.value.password) {
     return true;
@@ -175,18 +175,30 @@ const confirmPasswordRul = (value) => {
     return "Passwords do not match";
   }
 };
-const submitForm = () => {
-  if (!formValid) return;
+
+//reset form
+
+const reset = () => {
+  formData.value = {};
+  formData.value.photo = null;
+  previewUrl.value = null;
+  form.value.resetValidation();
+};
+
+//signUp user
+const submitForm = async () => {
+  if (!(await form.value.validate()).valid) return;
   loading.value = true;
   setTimeout(() => (loading.value = false), 1000);
   console.log(formData.value);
+  reset();
 };
 </script>
 
 <style scoped>
 .v-container {
   background-color: transparent;
-  background-image: url("/assets/camping_cat.jpg");
+  background-image: url("/assets/signUp.jpg");
   background-size: cover;
   background-position: center;
   display: flex;
@@ -208,5 +220,9 @@ const submitForm = () => {
 .v-img {
   width: 150px;
   height: 150px;
+}
+.v-card-title,
+.v-text-field {
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
 }
 </style>

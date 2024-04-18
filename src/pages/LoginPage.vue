@@ -1,56 +1,131 @@
 <template>
-  <div class="bg-red-800">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="4">
-          <v-card>
-            <v-card-title class="text-center">Login</v-card-title>
-            <v-card-text>
-              <v-form @submit.prevent="login">
-                <v-text-field
-                  v-model="email"
-                  label="Email"
-                  type="email"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="password"
-                  label="Password"
-                  type="password"
-                  required
-                ></v-text-field>
-                <v-btn type="submit" color="primary" block>Login</v-btn>
-              </v-form>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+  <v-container fluid>
+    <v-row>
+      <v-col>
+        <v-card rounded="lg" max-width="500" class="mx-auto pa-12">
+          <div class="tw-flex tw-justify-center">
+            <img
+              src="/home holiday hubbub.svg"
+              alt="Logo"
+              class="tw-w-14 tw-h-14"
+            />
+            <v-card-title class="font"> Login </v-card-title>
+          </div>
+          <v-card-text>
+            <v-form ref="form" @submit.prevent="login">
+              <CustomText
+                v-model="formData.email"
+                name="email"
+                label="Email"
+                placeholder="johndoe@gmail.com"
+                required
+                :rules="[required, emailRule]"
+                type="email"
+              />
+              <v-text-field
+                v-model="formData.password"
+                name="password"
+                label="Password"
+                :rules="[required, passwordRule]"
+                :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                @click:append-inner="show = !show"
+                :type="show ? 'text' : 'password'"
+                variant="underlined"
+                class="tw-mt-3"
+              ></v-text-field>
+              <div class="tw-flex tw-justify-end">
+                <router-link to="/login" class="hover:tw-underline"
+                  >forgetPassword??</router-link
+                >
+              </div>
+              <v-btn
+                color="success"
+                type="submit"
+                :loading="loading"
+                class="mt-4"
+                block
+                >Login</v-btn
+              >
+              <div class="tw-text-center tw-mt-6">
+                <span>Don't have an account? </span>
+                <router-link
+                  to="/signUp"
+                  class="tw-text-blue-300 hover:tw-underline"
+                  >Sign Up</router-link
+                >
+              </div>
+            </v-form>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    login() {
-      // Add your login logic here
-      console.log("Logging in...");
-    },
-  },
+<script setup>
+import { ref } from "vue";
+import CustomText from "../components/CustomText.vue";
+
+const show = ref(false);
+const loading = ref(false);
+const form = ref(null);
+const formData = ref({
+  email: "",
+  password: "",
+});
+
+//reqired validation
+const required = (value) => !!value || "Field is required !!";
+
+const emailRule = (value) =>
+  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+  "Email must be a valid email address";
+
+//password validation
+const passwordRule = (value) =>
+  (value && value.length >= 8) || "Password must be at least 8 characters long";
+
+//reset form
+
+const reset = () => {
+  form.value.reset();
+};
+
+//login user
+const login = async () => {
+  if (!(await form.value.validate()).valid) return;
+  loading.value = true;
+  setTimeout(() => (loading.value = false), 1000);
+  console.log(formData.value);
+  reset();
 };
 </script>
 
-<style>
-/* Center the card on small screens */
-@media only screen and (max-width: 600px) {
-  .v-card {
-    margin-top: 50px;
-  }
+<style scoped>
+.v-container {
+  background-color: transparent;
+  background-image: url("/assets/login.jpg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  min-height: 100vh;
+}
+.v-card {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 24px;
+  max-width: 100%;
+}
+.v-card-title {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.v-card-title,
+.v-text-field {
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
 }
 </style>
