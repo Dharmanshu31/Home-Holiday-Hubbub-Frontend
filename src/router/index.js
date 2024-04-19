@@ -12,18 +12,24 @@ import SignUpPage from "../pages/SignUpPage.vue";
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: HomePage },
+    {
+      path: "/",
+      component: HomePage,
+      children: [
+        {
+          path: "/property",
+          component: PropertyPage,
+          children: [{ path: ":propertyId", component: PropertyDetailPage }],
+        },
+        { path: "/list-property", component: PropertyListingPage },
+        { path: "/trip-history/:userId", component: PropertyHistoryPage },
+        { path: "/wish-list/:userId", component: WishListPage },
+        { path: "/reservations/:ownerId", component: ReservationPage },
+      ],
+    },
     { path: "/login", component: LoginPage },
     { path: "/signUp", component: SignUpPage },
-    {
-      path: "/property",
-      component: PropertyPage,
-      children: [{ path: ":propertyId", component: PropertyDetailPage }],
-    },
-    { path: "/list-property", component: PropertyListingPage },
-    { path: "/trip-history/:userId", component: PropertyHistoryPage },
-    { path: "/wish-list/:userId", component: WishListPage },
-    { path: "/reservations/:ownerId", component: ReservationPage },
+
     { path: "/:notFound(.*)", redirect: "/" },
   ],
 });
