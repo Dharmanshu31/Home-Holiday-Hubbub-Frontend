@@ -15,21 +15,18 @@ export const router = createRouter({
     {
       path: "/",
       component: HomePage,
-      children: [
-        {
-          path: "/property",
-          component: PropertyPage,
-          children: [{ path: ":propertyId", component: PropertyDetailPage }],
-        },
-        { path: "/list-property", component: PropertyListingPage },
-        { path: "/trip-history/:userId", component: PropertyHistoryPage },
-        { path: "/wish-list/:userId", component: WishListPage },
-        { path: "/reservations/:ownerId", component: ReservationPage },
-      ],
     },
+    {
+      path: "/property",
+      component: PropertyPage,
+      children: [{ path: ":propertyId", component: PropertyDetailPage }],
+    },
+    { path: "/list-property", component: PropertyListingPage },
+    { path: "/trip-history/:userId", component: PropertyHistoryPage },
+    { path: "/wish-list/:userId", component: WishListPage },
+    { path: "/reservations/:ownerId", component: ReservationPage },
     { path: "/login", component: LoginPage },
     { path: "/signUp", component: SignUpPage },
-
     { path: "/:notFound(.*)", redirect: "/" },
   ],
 });

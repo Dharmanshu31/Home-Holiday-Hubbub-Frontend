@@ -1,40 +1,39 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-app-bar color="#024950">
-        <template v-slot:prepend v-if="$vuetify.display.smAndDown">
-          <v-app-bar-nav-icon></v-app-bar-nav-icon>
-        </template>
+  <v-container>
+    <v-app-bar color="#024950">
+      <template v-slot:prepend v-if="$vuetify.display.smAndDown">
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      </template>
 
-        <v-app-bar-title class="tw-max-w-fit"
-          ><router-link to="/"
-            >Holiday Home Hubbub</router-link
-          ></v-app-bar-title
-        >
-        <v-text-field
-          v-model="search"
-          type="search"
-          color="white"
-          name="Search"
-          placeholder="Search the Home"
-          append-inner-icon="mdi-magnify"
-          variant="outlined"
-          @input="onSearch"
-          @click:append-inner="onClick"
-          class="tw-my-auto tw-py-1 tw-max-w-96 tw-mx-2"
-        ></v-text-field>
-        <v-spacer></v-spacer>
-        <v-btn
-          v-if="$vuetify.display.xs"
-          icon="mdi-dots-vertical"
-          class="tw-float-right"
-        ></v-btn>
-        <v-btn v-if="$vuetify.display.smAndUp" class="tw-float-right"
-          ><router-link to="/login">Login</router-link></v-btn
-        >
-      </v-app-bar>
-    </v-container>
-  </v-app>
+      <v-app-bar-title v-if="$vuetify.display.mdAndUp" class="tw-max-w-fit"
+        ><router-link to="/">Holiday Home Hubbub</router-link></v-app-bar-title
+      >
+      <!-- <v-app-bar-title v-else="$vuetify.display.smAndDown"
+        ><router-link to="/"><img src="/home holiday hubbub.svg" /></router-link
+      ></v-app-bar-title> -->
+      <v-text-field
+        v-model="search"
+        type="search"
+        name="Search"
+        placeholder="Search the Home"
+        append-inner-icon="mdi-magnify"
+        variant="outlined"
+        @input="onSearch"
+        @click:append-inner="onClick"
+        class="tw-my-auto tw-py-1 tw-mx-2 tw-w-48"
+        rounded="pill"
+      ></v-text-field>
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="$vuetify.display.xs"
+        icon="mdi-dots-vertical"
+        class="tw-float-right"
+      ></v-btn>
+      <v-btn v-if="$vuetify.display.smAndUp" class="tw-float-right"
+        ><router-link to="/login">Login</router-link></v-btn
+      >
+    </v-app-bar>
+  </v-container>
 </template>
 
 <script setup>
@@ -57,4 +56,18 @@ const onSearch = (e) => {
 .v-app-bar {
   background-color: #0fa4af;
 }
+:deep(
+    .v-text-field .v-field--no-label input,
+    .v-text-field .v-field--active input
+  ) {
+  padding-top: 7px;
+}
+:deep(.v-field__append-inner) {
+  padding-bottom: 7px;
+}
+/* @media (max-width: 959.98px) {
+  :deep(.v-toolbar__content > .v-toolbar-title) {
+    margin-inline-start: auto;
+  }
+} */
 </style>
