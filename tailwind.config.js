@@ -10,6 +10,7 @@ export default {
         third: "#964734",
         four: "#0FA4AF",
         five: "#AFDDE5",
+        heading: "#24355a",
       },
     },
   },

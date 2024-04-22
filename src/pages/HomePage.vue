@@ -18,9 +18,55 @@
       </div>
     </v-carousel-item>
   </v-carousel>
+
+  <v-container>
+    <v-row>
+      <v-col
+        class="tw-flex tw-justify-center tw-text-heading tw-font-bold tw-text-center tw-text-4xl tw-mt-10"
+        >Explore Top Categories</v-col
+      >
+    </v-row>
+    <v-row>
+      <v-col
+        class="tw-mt-3 tw-text-center tw-max-w-52 tw-px-9"
+        style="padding-inline: 12%"
+        >Explore our wide range of vacation rentals that cater to all types of
+        travelers. Immerse yourself in the local culture, enjoy the comforts of
+        home, and create unforgettable memories in your dream
+        destination.</v-col
+      >
+    </v-row>
+    <v-row>
+      <v-col
+        v-for="(image, index) in images"
+        :key="index"
+        class="tw-flex tw-justify-center tw-gap-2"
+        style="padding: 50px 0"
+      >
+        <Image
+          :link="image.link"
+          :image="image.image"
+          :alt="image.alt"
+          :text="image.text"
+          :path="image.path"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
+import Image from "../components/Image.vue";
+import {
+  mdiAccount,
+  mdiBeach,
+  mdiForest,
+  mdiHomeCityOutline,
+  mdiImageFilterHdrOutline,
+  mdiIsland,
+  mdiPool,
+  mdiWindPower,
+} from "@mdi/js";
 const items = [
   { src: "/assets/imags/slide.jpg" },
   { src: "/assets/imags/pool_cat.jpg" },
@@ -28,6 +74,57 @@ const items = [
   { src: "/assets/imags/island_cat.webp" },
   { src: "/assets/Listing1/7.jpg" },
   { src: "/assets/Listing2/7.jpg " },
+];
+const images = [
+  {
+    link: "/property",
+    image: "/assets/Listing1/7.jpg",
+    alt: "view",
+    text: "Beachfront",
+    path: mdiBeach,
+  },
+  {
+    link: "/property",
+    image: "/assets/imags/windmill_cat.webp",
+    alt: "view",
+    text: "Windmills",
+    path: mdiWindPower,
+  },
+  {
+    link: "/property",
+    image: "/assets/imags/modern_cat.webp",
+    alt: "view",
+    text: "Iconic cities",
+    path: mdiHomeCityOutline,
+  },
+  {
+    link: "/property",
+    image: "/assets/imags/countryside_cat.webp",
+    alt: "view",
+    text: "Countryside",
+    path: mdiImageFilterHdrOutline,
+  },
+  {
+    link: "/property",
+    image: "/assets/imags/pool_cat.jpg",
+    alt: "view",
+    text: "Amazing Pools",
+    path: mdiPool,
+  },
+  {
+    link: "/property",
+    image: "/assets/imags/island_cat.webp",
+    alt: "view",
+    text: "Islands",
+    path: mdiIsland,
+  },
+  {
+    link: "/property",
+    image: "/assets/imags/register.jpg",
+    alt: "view",
+    text: "Nature",
+    path: mdiForest,
+  },
 ];
 </script>
 <style scoped>
@@ -43,7 +140,7 @@ const items = [
 }
 @media screen and (max-width: 600px) {
   .title-text {
-    font-size: 2rem; /* Adjust font size for smaller screens */
+    font-size: 2rem;
   }
 }
 </style>
