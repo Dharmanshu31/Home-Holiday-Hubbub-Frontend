@@ -7,7 +7,7 @@
     touch
   >
     <v-carousel-item
-      v-for="(item, i) in items"
+      v-for="(item, i) in cImage"
       :key="i"
       :src="item.src"
       cover
@@ -67,8 +67,8 @@
   </v-container>
   <v-container class="tw-w-full">
     <v-row>
-      <v-col xs="12" sm="6" md="4" lg="3" v-for="n in 8" :key="n">
-        <HomeCard />
+      <v-col xs="12" sm="6" md="4" lg="3" v-for="(item, i) in items" :key="i">
+        <HomeCard :item="item" />
       </v-col>
     </v-row>
   </v-container>
@@ -86,7 +86,41 @@ import {
   mdiPool,
   mdiWindPower,
 } from "@mdi/js";
+
 const items = [
+  {
+    title: "Australian beaches",
+    type: "Betch",
+    price: "12000",
+  },
+  {
+    title: "Australian beaches",
+    type: "Betch",
+    price: "1200",
+  },
+  {
+    title: "Australian beaches",
+    type: "Betch",
+    price: "2000",
+  },
+  {
+    title: "Australian beaches",
+    type: "Betch",
+    price: "1200",
+  },
+  {
+    title: "Australian beaches",
+    type: "Betch",
+    price: "1200",
+  },
+  {
+    title: "Australian beaches",
+    type: "Betch",
+    price: "1200",
+  },
+];
+
+const cImage = [
   { src: "/assets/imags/slide.jpg" },
   { src: "/assets/imags/pool_cat.jpg" },
   { src: "/assets/Listing1/1.jpg" },
