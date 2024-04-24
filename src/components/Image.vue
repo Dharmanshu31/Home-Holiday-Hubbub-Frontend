@@ -5,7 +5,7 @@
     >
       <img :src="image" :alt="alt" class="tw-absolute tw-w-full tw-h-full" />
       <div
-        class="tw-absolute tw-w-full tw-h-full tw-bg-black tw-opacity-55 tw-scale-100 hover:tw-scale-75 transition-transform tw-duration-500 ease-in-out"
+        class="tw-absolute tw-w-full tw-h-full tw-bg-black tw-opacity-50 tw-scale-100 hover:tw-scale-75 transition-transform tw-duration-500 ease-in-out"
       ></div>
       <div
         class="tw-relative tw-text-white tw-flex tw-flex-col tw-items-center"

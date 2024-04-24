@@ -11,6 +11,8 @@ export default {
         four: "#0FA4AF",
         five: "#AFDDE5",
         heading: "#24355a",
+        newbg: "#f7f8f8",
+        footer: "#9f9a9a",
       },
     },
   },

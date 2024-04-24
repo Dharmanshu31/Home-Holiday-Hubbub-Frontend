@@ -1,16 +1,16 @@
 <template>
   <v-app>
     <TheHeader v-if="!showHeaderAndFooter" />
-    <main class="tw-mt-8">
+    <main>
       <router-view></router-view>
     </main>
-    <!-- <TheFooter v-if="!showHeaderAndFooter" /> -->
+    <TheFooter v-if="!showHeaderAndFooter" />
   </v-app>
 </template>
 
 <script setup>
 import TheHeader from "./layout/ui/TheHeader.vue";
-// import TheFooter from "./layout/ui/TheFooter.vue";
+import TheFooter from "./layout/ui/TheFooter.vue";
 
 import { useRoute } from "vue-router";
 import { computed } from "vue";

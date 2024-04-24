@@ -1,6 +1,18 @@
 <template>
-  <v-carousel hide-delimiters cycle :interval="4000" touch>
-    <v-carousel-item v-for="(item, i) in items" :key="i" :src="item.src" cover>
+  <v-carousel
+    class="slider tw-mt-8"
+    hide-delimiters
+    cycle
+    :interval="4000"
+    touch
+  >
+    <v-carousel-item
+      v-for="(item, i) in items"
+      :key="i"
+      :src="item.src"
+      cover
+      content-class="slider"
+    >
       <div
         class="tw-flex tw-h-full tw-justify-center tw-text-white tw-bg-black tw-bg-opacity-20 tw-shadow-lg tw-border-2 tw-border-emerald-900"
       >
@@ -19,7 +31,7 @@
     </v-carousel-item>
   </v-carousel>
 
-  <v-container>
+  <v-container class="tw-bg-newbg">
     <v-row>
       <v-col
         class="tw-flex tw-justify-center tw-text-heading tw-font-bold tw-text-center tw-text-4xl tw-mt-10"
@@ -53,14 +65,21 @@
       </v-col>
     </v-row>
   </v-container>
+  <v-container class="tw-w-full">
+    <v-row>
+      <v-col xs="12" sm="6" md="4" lg="3" v-for="n in 8" :key="n">
+        <HomeCard />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup>
+import HomeCard from "../components/HomeCard.vue";
 import Image from "../components/Image.vue";
 import {
-  mdiAccount,
   mdiBeach,
-  mdiForest,
+  mdiForestOutline,
   mdiHomeCityOutline,
   mdiImageFilterHdrOutline,
   mdiIsland,
@@ -78,7 +97,7 @@ const items = [
 const images = [
   {
     link: "/property",
-    image: "/assets/Listing1/7.jpg",
+    image: "/assets/imags/beach_cat.jpg",
     alt: "view",
     text: "Beachfront",
     path: mdiBeach,
@@ -123,7 +142,7 @@ const images = [
     image: "/assets/imags/register.jpg",
     alt: "view",
     text: "Nature",
-    path: mdiForest,
+    path: mdiForestOutline,
   },
 ];
 </script>
