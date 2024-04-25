@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="tw-flex tw-flex-col tw-mt-14" color="#f7f7f7">
+  <v-footer class="tw-flex tw-flex-col" color="#f7f7f7">
     <div>
       <v-btn
         v-for="icon in icons"
@@ -10,19 +10,35 @@
       ></v-btn>
     </div>
 
-    <div class="pt-4 tw-justify-between tw-w-full">
+    <div class="pt-4 tw-w-full">
       <v-row>
-        <v-col md="6" sm="6" xm="6">
-          <a href="#" class="text-lg font-semibold mb-2 tw-pl-28">About Us</a>
+        <v-col class="tw-flex tw-flex-col tw-ml-16">
+          <a href="/" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >About Us</a
+          >
+          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Propertys</a
+          >
+          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >History</a
+          >
         </v-col>
-        <v-col md="6" sm="6" xm="6">
-          <a href="#" class="text-lg font-semibold mb-2">Connect Us</a>
+
+        <v-col class="tw-flex tw-flex-col">
+          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Connect Us</a
+          >
+          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Popular Home</a
+          >
+          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Latest News</a
+          >
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col></v-col>
       </v-row>
     </div>
+    <br />
+    <br />
     <div>
       Discover your perfect holiday home with Holiday Home Hubbub. Explore our
       curated collection of rental properties and start planning your next
@@ -45,3 +61,9 @@ const icons = [
   { icon: "mdi-instagram", link: "" },
 ];
 </script>
+
+<style scoped>
+.foot:hover {
+  text-decoration: underline;
+}
+</style>

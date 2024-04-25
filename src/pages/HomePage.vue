@@ -72,6 +72,8 @@
       </v-col>
     </v-row>
   </v-container>
+  <br />
+  <br />
 </template>
 
 <script setup>
@@ -90,31 +92,37 @@ import {
 const items = [
   {
     title: "Australian beaches",
+    location: "Alisoana, Sydny Aus",
     type: "Betch",
     price: "12000",
   },
   {
     title: "Australian beaches",
-    type: "Betch",
+    location: "Alisoana, Sydny Aus",
+    type: "windmil",
     price: "1200",
   },
   {
     title: "Australian beaches",
-    type: "Betch",
+    location: "Alisoana, Sydny Aus",
+    type: "Lusarios",
     price: "2000",
   },
   {
     title: "Australian beaches",
+    location: "Alisoana, Sydny Aus",
+    type: "Nature",
+    price: "1200",
+  },
+  {
+    title: "Australian beaches",
+    location: "Alisoana, Sydny Aus",
     type: "Betch",
     price: "1200",
   },
   {
     title: "Australian beaches",
-    type: "Betch",
-    price: "1200",
-  },
-  {
-    title: "Australian beaches",
+    location: "Alisoana, Sydny Aus",
     type: "Betch",
     price: "1200",
   },

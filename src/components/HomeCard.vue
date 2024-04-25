@@ -24,11 +24,11 @@
     }}</v-card-title>
 
     <v-card-subtitle class="pt-4 tw-font-semibold">
-      {{ item.type }}
+      {{ item.location }}
     </v-card-subtitle>
 
     <v-card-text>
-      <div>{{ item.title }}</div>
+      <div>{{ item.type }}</div>
 
       <div class="tw-font-bold">${{ item.price }}</div>
     </v-card-text>
