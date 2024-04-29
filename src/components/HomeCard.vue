@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="400" hover>
+  <v-card class="mx-auto" max-width="300" max-height="400" hover>
     <v-row>
       <v-col>
         <v-carousel height="200" touch hide-delimiters class="slideBtn">

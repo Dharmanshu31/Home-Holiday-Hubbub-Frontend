@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="tw-flex tw-flex-col" color="#f7f7f7">
+  <v-footer class="tw-flex tw-flex-col tw-mt-[100px]" color="#f7f7f7">
     <div>
       <v-btn
         v-for="icon in icons"
@@ -13,25 +13,34 @@
     <div class="pt-4 tw-w-full">
       <v-row>
         <v-col class="tw-flex tw-flex-col tw-ml-16">
-          <a href="/" class="foot text-lg font-semibold mb-2 tw-w-max"
-            >About Us</a
+          <router-link to="/" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >About Us</router-link
           >
-          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
-            >Propertys</a
+          <router-link
+            to="/property"
+            class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Propertys</router-link
           >
-          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
-            >History</a
+          <router-link
+            to="/trip-history/:userId"
+            class="foot text-lg font-semibold mb-2 tw-w-max"
+            >History</router-link
           >
         </v-col>
 
         <v-col class="tw-flex tw-flex-col">
-          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
-            >Connect Us</a
+          <router-link to="/" class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Connect Us</router-link
           >
-          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
-            >Popular Home</a
+          <router-link
+            to="/property"
+            class="foot text-lg font-semibold mb-2 tw-w-max"
+            >Popular Home</router-link
           >
-          <a href="#" class="foot text-lg font-semibold mb-2 tw-w-max"
+          <a
+            href="https://www.news18.com/lifestyle/travel/"
+            target="_blank"
+            class="foot text-lg font-semibold mb-2 tw-w-max"
             >Latest News</a
           >
         </v-col>

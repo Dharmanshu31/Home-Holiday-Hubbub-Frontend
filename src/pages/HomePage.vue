@@ -65,7 +65,7 @@
       </v-col>
     </v-row>
   </v-container>
-  <v-container class="tw-w-full">
+  <v-container class="tw-w-full tw-mt-8">
     <v-row>
       <v-col xs="12" sm="6" md="4" lg="3" v-for="(item, i) in items" :key="i">
         <HomeCard :item="item" />
