@@ -128,4 +128,16 @@ const login = async () => {
 .v-text-field {
   text-shadow: 1px 1px 2px rgb(0, 0, 0);
 }
+:deep(
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active
+  ) {
+  transition: background-color 5000s;
+  -webkit-text-fill-color: #fff !important;
+}
+:deep(.v-text-field .v-messages__message) {
+  color: rgb(255, 255, 255);
+}
 </style>

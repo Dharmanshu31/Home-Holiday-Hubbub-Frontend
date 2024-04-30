@@ -13,6 +13,7 @@ export default {
         heading: "#24355a",
         newbg: "#f7f8f8",
         footer: "#9f9a9a",
+        pinkRed: "#f8395a",
       },
     },
   },
