@@ -70,6 +70,8 @@
             <h3 class="tw-text-lg tw-font-bold tw-mt-10 tw-mb-5">
               Where's your place located?
             </h3>
+            <h1 class="tw-font-bold tw-mb-5">Pick Location from Map</h1>
+            <Map @locationSelected="setLocationFileds" />
             <v-container>
               <v-row>
                 <v-col>
@@ -81,6 +83,7 @@
                     clearable
                     class="tw-max-w-[700px]"
                     :rules="[required]"
+                    v-model="address"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -105,6 +108,7 @@
                     variant="outlined"
                     clearable
                     :rules="[required]"
+                    v-model="city"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -117,6 +121,7 @@
                     variant="outlined"
                     clearable
                     :rules="[required]"
+                    v-model="zipcode"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="field-width">
@@ -127,6 +132,7 @@
                     variant="outlined"
                     clearable
                     :rules="[required]"
+                    v-model="country"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -198,6 +204,36 @@
             <h3 class="tw-text-lg tw-font-bold tw-mt-10">
               Add some photos of your place
             </h3>
+            <div class="tw-flex tw-flex-wrap tw-gap-4 tw-mt-6">
+              <div v-for="(image, i) in imagePriview" :key="i">
+                <v-img :src="image" cover class="tw-w-[250px] tw-h-[150px]">
+                  <v-icon
+                    icon="mdi-trash-can-outline"
+                    class="tw-bg-white tw-opacity-80 tw-p-1 tw-float-end"
+                    @click="removeImage(i)"
+                  ></v-icon>
+                </v-img>
+              </div>
+              <v-file-input
+                accept="image/*"
+                multiple
+                style="display: none"
+                id="image"
+                v-model="photos"
+                @change="previewImage"
+              ></v-file-input>
+              <label
+                for="image"
+                class="tw-py-10 tw-px-24 tw-flex tw-flex-col tw-justify-center tw-cursor-pointer tw-border tw-border-black tw-border-dashed tw-rounded-lg tw-items-center tw-w-[250px] tw-h-[150px]"
+              >
+                <div class="tw-text-3xl">
+                  <v-icon icon="mdi-image-multiple"></v-icon>
+                </div>
+                <p class="tw-font-semibold tw-text-center tw-min-w-max tw-mt-1">
+                  Upload from your device
+                </p>
+              </label>
+            </div>
 
             <h3 class="tw-text-lg tw-font-bold tw-mt-10">
               What make your place attractive and exciting?
@@ -297,6 +333,7 @@ import { ref } from "vue";
 import { amenities } from "../data";
 import { icons } from "../data";
 import { plases } from "../data";
+import Map from "../components/Map.vue";
 
 const iconClass =
   "filter-border tw-border tw-w-28 tw-h-24 tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
@@ -315,6 +352,12 @@ const bedroom = ref(1);
 const bathroom = ref(1);
 const beds = ref(1);
 const form = ref(1);
+const address = ref("");
+const city = ref("");
+const zipcode = ref("");
+const country = ref("");
+const photos = ref([]);
+const imagePriview = ref([]);
 
 const basics = [
   { name: "Guests", value: guest, refName: "guest" },
@@ -372,6 +415,28 @@ const setAmenitie = (name) => {
   } else {
     amenitie.value.push(name);
   }
+};
+
+const previewImage = () => {
+  for (let i = 0; i < photos.value.length; i++) {
+    const file = photos.value[i];
+    const render = new FileReader();
+    render.onload = (e) => {
+      imagePriview.value.push(e.target.result);
+    };
+    render.readAsDataURL(file);
+  }
+};
+
+const removeImage = (index) => {
+  imagePriview.value.splice(index, 1);
+};
+
+const setLocationFileds = (locationDetails) => {
+  address.value = locationDetails.streetAddress;
+  city.value = locationDetails.city;
+  zipcode.value = locationDetails.zipcode;
+  country.value = locationDetails.country;
 };
 
 const required = (value) => !!value || "Field is required !!";
