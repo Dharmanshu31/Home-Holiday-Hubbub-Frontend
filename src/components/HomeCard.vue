@@ -13,8 +13,8 @@
               class="tw-float-right tw-mx-2 tw-my-2"
               :color="liked ? '#F56040' : '#ffffff'"
               @click="toggleLike"
-              >mdi-heart</v-icon
-            >
+              :icon="liked ? 'mdi-heart' : 'mdi-heart-outline'"
+            ></v-icon>
           </v-carousel-item>
         </v-carousel>
       </v-col>
