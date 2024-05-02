@@ -77,11 +77,19 @@
 </template>
 
 <script setup>
+import { useStore } from "vuex";
 import HomeCard from "../components/HomeCard.vue";
 import Image from "../components/Image.vue";
-import { items } from "../data";
 import { cImage } from "../data";
 import { images } from "../data";
+import { onMounted, ref } from "vue";
+
+const items = ref([]);
+const store = useStore();
+onMounted(async () => {
+  await store.dispatch("getProperty");
+  items.value = store.state.property.propertys;
+});
 </script>
 <style scoped>
 :deep(.v-btn--icon.v-btn--size-default) {

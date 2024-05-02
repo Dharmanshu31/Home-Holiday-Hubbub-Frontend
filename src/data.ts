@@ -65,45 +65,6 @@ export const plases = [
   },
 ];
 
-export const items = [
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "Betch",
-    price: "12000",
-  },
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "windmil",
-    price: "1200",
-  },
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "Lusarios",
-    price: "2000",
-  },
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "Nature",
-    price: "1200",
-  },
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "Betch",
-    price: "1200",
-  },
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "Betch",
-    price: "1200",
-  },
-];
-
 export const cImage = [
   { src: "/assets/imags/slide.jpg" },
   { src: "/assets/imags/pool_cat.jpg" },
