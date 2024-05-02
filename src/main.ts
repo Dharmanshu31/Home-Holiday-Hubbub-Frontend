@@ -19,7 +19,7 @@ const vuetify = createVuetify({
 const app = createApp(App);
 app.use(vuetify);
 app.use(router);
-app.component(TheHeader);
-app.component(TheFooter);
+app.component("TheHeader", TheHeader);
+app.component("TheFooter", TheFooter);
 
 app.mount("#app");
