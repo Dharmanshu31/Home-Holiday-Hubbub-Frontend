@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "types": ["vue", "vuex"],
-    "lib": ["ESNext", "dom"]
+    "lib": ["ESNext", "dom"],
+    "esModuleInterop": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

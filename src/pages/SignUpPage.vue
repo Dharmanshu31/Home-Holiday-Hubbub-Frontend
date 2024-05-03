@@ -60,7 +60,7 @@
               />
               <v-select
                 v-model="formData.role"
-                :items="['User', 'Landlord']"
+                :items="['user', 'landlord']"
                 label="User Role"
                 outlined
                 :rules="[required]"
@@ -114,6 +114,7 @@
 <script setup>
 import { ref } from "vue";
 import CustomText from "../components/CustomText.vue";
+import { useStore } from "vuex";
 const show = ref(false);
 const loading = ref(false);
 const form = ref(null);
@@ -126,6 +127,7 @@ const formData = ref({
   role: "",
   photo: null,
 });
+const store = useStore();
 
 const previewUrl = ref(null);
 
@@ -189,8 +191,20 @@ const reset = () => {
 const submitForm = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
-  setTimeout(() => (loading.value = false), 1000);
-  console.log(formData.value);
+  let formDataObj = new FormData();
+  formDataObj.append(
+    "name",
+    formData.value.firstName + " " + formData.value.lastName
+  );
+  formDataObj.append("email", formData.value.email);
+  formDataObj.append("password", formData.value.password);
+  formDataObj.append("confirmPassword", formData.value.confirmPassword);
+  formDataObj.append("role", formData.value.role);
+  if (formData.value.photo) {
+    formDataObj.append("photo", formData.value.photo);
+  }
+  await store.dispatch("signUp", formDataObj);
+  loading.value = false;
   reset();
 };
 </script>

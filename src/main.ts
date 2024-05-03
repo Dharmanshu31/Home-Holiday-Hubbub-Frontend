@@ -11,7 +11,6 @@ import { router } from "./router/index";
 import TheHeader from "./layout/ui/TheHeader.vue";
 import TheFooter from "./layout/ui/TheFooter.vue";
 import store from "./store";
-import { VueQueryPlugin } from "@tanstack/vue-query";
 
 const vuetify = createVuetify({
   components,
@@ -22,7 +21,6 @@ const app = createApp(App);
 app.use(vuetify);
 app.use(router);
 app.use(store);
-app.use(VueQueryPlugin);
 app.component("TheHeader", TheHeader);
 app.component("TheFooter", TheFooter);
 

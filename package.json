@@ -12,15 +12,17 @@
     "@jamescoyle/vue-icon": "^0.1.2",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
-    "@tanstack/vue-query": "^5.32.1",
     "axios": "^1.6.8",
+    "js-cookie": "^3.0.5",
     "leaflet": "^1.9.4",
     "volar-service-vetur": "^0.0.34",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "vue3-toastify": "^0.2.1",
     "vuetify": "^3.5.15"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@vitejs/plugin-vue": "^5.0.4",
     "autoprefixer": "^10.4.19",
     "dotenv": "^16.4.5",

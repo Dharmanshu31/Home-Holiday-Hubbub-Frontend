@@ -65,6 +65,9 @@
 <script setup>
 import { ref } from "vue";
 import CustomText from "../components/CustomText.vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+import { useStore } from "vuex";
 
 const show = ref(false);
 const loading = ref(false);
@@ -73,6 +76,7 @@ const formData = ref({
   email: "",
   password: "",
 });
+const store = useStore();
 
 //reqired validation
 const required = (value) => !!value || "Field is required !!";
@@ -95,8 +99,11 @@ const reset = () => {
 const login = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
-  setTimeout(() => (loading.value = false), 1000);
-  console.log(formData.value);
+  store.dispatch("login", {
+    email: formData.value.email,
+    password: formData.value.password,
+  });
+  loading.value = false;
   reset();
 };
 </script>
