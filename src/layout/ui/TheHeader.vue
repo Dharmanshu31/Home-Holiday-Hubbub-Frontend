@@ -38,6 +38,16 @@
 
 <script setup>
 import { ref } from "vue";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+import { useStore } from "vuex";
+
+const store = useStore();
+
+//next 3 line for decode and store token value to VueX
+const token = Cookies.get("token");
+const decode = jwtDecode(token);
+store.commit("setUser", { id: decode.id, role: decode.role });
 
 const search = ref("");
 const onClick = () => {

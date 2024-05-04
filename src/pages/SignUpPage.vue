@@ -115,6 +115,9 @@
 import { ref } from "vue";
 import CustomText from "../components/CustomText.vue";
 import { useStore } from "vuex";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+
 const show = ref(false);
 const loading = ref(false);
 const form = ref(null);
@@ -203,7 +206,13 @@ const submitForm = async () => {
   if (formData.value.photo) {
     formDataObj.append("photo", formData.value.photo);
   }
-  await store.dispatch("signUp", formDataObj);
+  const response = await store.dispatch("signUp", formDataObj);
+  if (response.code && response.code === "ERR_NETWORK") {
+    toast.error("Network Error!! try again letter");
+  }
+  if (response.response && response.response.status === 400) {
+    toast.error(response.response.data.message);
+  }
   loading.value = false;
   reset();
 };

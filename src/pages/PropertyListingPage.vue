@@ -334,6 +334,7 @@ import { amenities } from "../data";
 import { icons } from "../data";
 import { plases } from "../data";
 import Map from "../components/Map.vue";
+import axios from "../store/axios";
 
 const iconClass =
   "filter-border tw-border tw-w-28 tw-h-24 tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
@@ -443,6 +444,11 @@ const required = (value) => !!value || "Field is required !!";
 
 const createProperty = async () => {
   if (!(await form.value.validate()).valid) return;
+  try {
+    const response = axios.post();
+  } catch (err) {
+    console.log(err);
+  }
   console.log("submitting.....");
   form.value.reset();
 };

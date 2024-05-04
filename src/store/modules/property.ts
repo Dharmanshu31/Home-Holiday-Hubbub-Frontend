@@ -12,17 +12,19 @@ export default {
     };
   },
   mutations: {
+    //set property
     getPoperty(state: Count, data: []) {
       state.propertys = data;
     },
   },
   actions: {
+    //fetch all propertys
     async getProperty({ commit }: { commit: Commit }) {
       try {
         const response = await axios.get("property");
         commit("getPoperty", response.data.properties);
       } catch (err) {
-        console.log(err);
+        return err;
       }
     },
   },

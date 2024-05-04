@@ -68,7 +68,9 @@ import CustomText from "../components/CustomText.vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const show = ref(false);
 const loading = ref(false);
 const form = ref(null);
@@ -92,17 +94,26 @@ const passwordRule = (value) =>
 //reset form
 
 const reset = () => {
-  form.value.reset();
+  form.value.resetValidation();
 };
 
 //login user
 const login = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
-  store.dispatch("login", {
+  const response = await store.dispatch("login", {
     email: formData.value.email,
     password: formData.value.password,
   });
+  if (response.status === 201) {
+    router.push("/");
+  }
+  if (response.response && response.response.status === 400) {
+    toast.error("Invalid Email or Password");
+  }
+  if (response.code && response.code === "ERR_NETWORK") {
+    toast.error("Network Error!! try again letter");
+  }
   loading.value = false;
   reset();
 };
