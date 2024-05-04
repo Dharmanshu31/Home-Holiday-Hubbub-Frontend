@@ -98,6 +98,7 @@
                     variant="outlined"
                     clearable
                     :rules="[required]"
+                    v-model="appartment"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="field-width">
@@ -186,10 +187,7 @@
                         amenitie.includes(ame.text),
                     },
                   ]"
-                  @click="
-                    setAmenitie(ame.text);
-                    console.log(amenitie);
-                  "
+                  @click="setAmenitie(ame.text)"
                 >
                   <div class="tw-text-2xl">
                     <v-icon :icon="ame.name"></v-icon>
@@ -244,6 +242,7 @@
                 <v-col>
                   <p class="tw-mb-1 tw-font-bold tw-pb-2">Title</p>
                   <v-text-field
+                    v-model="title"
                     clear-icon="mdi-close-circle"
                     placeholder="Title"
                     variant="outlined"
@@ -257,13 +256,14 @@
                 <v-col>
                   <p class="tw-mb-1 tw-font-bold tw-pb-2">Description</p>
                   <v-textarea
+                    v-model="description"
                     clear-icon="mdi-close-circle"
                     placeholder="Description"
                     variant="outlined"
                     clearable
                     class="tw-max-w-[600px]"
                     rows="1"
-                    :rules="[required]"
+                    :rules="[required, descriptionRule]"
                   ></v-textarea>
                 </v-col>
               </v-row>
@@ -271,6 +271,7 @@
                 <v-col>
                   <p class="tw-mb-1 tw-font-bold tw-pb-2">Highlight</p>
                   <v-text-field
+                    v-model="highlight"
                     clear-icon="mdi-close-circle"
                     placeholder="Highlight"
                     variant="outlined"
@@ -284,13 +285,14 @@
                 <v-col>
                   <p class="tw-mb-1 tw-font-bold tw-pb-2">Highlight details</p>
                   <v-textarea
+                    v-model="detailHighlight"
                     clear-icon="mdi-close-circle"
                     placeholder="Highlight details"
                     variant="outlined"
                     clearable
                     class="tw-max-w-[600px]"
                     rows="1"
-                    :rules="[required]"
+                    :rules="[required, descriptionRule]"
                   ></v-textarea>
                 </v-col>
               </v-row>
@@ -300,6 +302,7 @@
                     Now, set your PRICE
                   </p>
                   <v-text-field
+                    v-model="price"
                     prepend-inner-icon="mdi-currency-rupee"
                     clear-icon="mdi-close-circle"
                     placeholder="Street Address"
@@ -335,6 +338,7 @@ import { icons } from "../data";
 import { plases } from "../data";
 import Map from "../components/Map.vue";
 import axios from "../store/axios";
+import Cookies from "js-cookie";
 
 const iconClass =
   "filter-border tw-border tw-w-28 tw-h-24 tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
@@ -357,8 +361,16 @@ const address = ref("");
 const city = ref("");
 const zipcode = ref("");
 const country = ref("");
+const lag = ref();
+const lat = ref();
+const appartment = ref("");
 const photos = ref([]);
 const imagePriview = ref([]);
+const title = ref("");
+const description = ref("");
+const highlight = ref("");
+const detailHighlight = ref("");
+const price = ref("");
 
 const basics = [
   { name: "Guests", value: guest, refName: "guest" },
@@ -403,11 +415,9 @@ const decrement = (field) => {
 
 const setIconeName = (name) => {
   iconName.value = name;
-  console.log(iconName.value);
 };
 const setPlaceName = (name) => {
   placeName.value = name;
-  console.log(placeName.value);
 };
 
 const setAmenitie = (name) => {
@@ -438,19 +448,73 @@ const setLocationFileds = (locationDetails) => {
   city.value = locationDetails.city;
   zipcode.value = locationDetails.zipcode;
   country.value = locationDetails.country;
+  lag.value = locationDetails.lag;
+  lat.value = locationDetails.lat;
 };
 
 const required = (value) => !!value || "Field is required !!";
+const descriptionRule = (value) => {
+  const words = value.trim().split(/\s+/).length;
+  return words > 15 || "Must be more than 15 words.";
+};
+const reset = () => {
+  form.value.reset();
+  photos.value = [];
+};
 
 const createProperty = async () => {
   if (!(await form.value.validate()).valid) return;
+  const location = {
+    formattedAddress: address.value + " " + appartment.value,
+    city: city.value,
+    state: city.value,
+    zipcode: zipcode.value,
+    country: country.value,
+  };
+  if (lat.value && lag.value) {
+    location.coordinates = [lag.value, lat.value];
+  }
+  if (!iconName || !placeName || amenitie.length === 0) {
+    iconName.value === "Other";
+    placeName.value === "An entire place";
+    amenitie.push("Personal care products");
+  }
+
+  const images = new FormData();
+  for (let i = 0; i < photos.value.length; i++) {
+    const file = photos.value[i];
+    images.append("images", file);
+  }
+  console.log(images.getAll("images"));
+  const formData = {
+    propertyCategory: iconName.value,
+    propertyType: placeName.value,
+    location: location,
+    address: address.value,
+    maxGuests: +basics[0].value.value,
+    bedrooms: +basics[1].value.value,
+    bed: +basics[2].value.value,
+    bathrooms: +basics[3].value.value,
+    amenities: amenitie.value,
+    name: title.value,
+    description: description.value,
+    highlight: highlight.value,
+    highlightDetail: detailHighlight.value,
+    pricePerNight: +price.value,
+    images: images.getAll("images"),
+  };
+  const token = Cookies.get("token");
   try {
-    const response = axios.post();
+    const response = await axios.post("property", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
   } catch (err) {
     console.log(err);
   }
-  console.log("submitting.....");
-  form.value.reset();
+  reset();
 };
 </script>
 

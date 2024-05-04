@@ -66,6 +66,8 @@ const onMapClick = (e) => {
         country: address.country || "",
         zipcode: address.postcode || "",
         streetAddress: data.results[0].formatted || "",
+        lag: e.latlng.lng,
+        lat: e.latlng.lat,
       };
       emit("locationSelected", locationDetails);
     });
