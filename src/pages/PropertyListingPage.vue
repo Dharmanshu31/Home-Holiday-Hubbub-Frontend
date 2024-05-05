@@ -464,46 +464,45 @@ const reset = () => {
 
 const createProperty = async () => {
   if (!(await form.value.validate()).valid) return;
-  const location = {
-    formattedAddress: address.value + " " + appartment.value,
-    city: city.value,
-    state: city.value,
-    zipcode: zipcode.value,
-    country: country.value,
-  };
-  if (lat.value && lag.value) {
-    location.coordinates = [lag.value, lat.value];
-  }
+
   if (!iconName || !placeName || amenitie.length === 0) {
     iconName.value === "Other";
     placeName.value === "An entire place";
     amenitie.push("Personal care products");
   }
 
-  const images = new FormData();
-  for (let i = 0; i < photos.value.length; i++) {
-    const file = photos.value[i];
-    images.append("images", file);
-  }
-  console.log(images.getAll("images"));
-  const formData = {
-    propertyCategory: iconName.value,
-    propertyType: placeName.value,
-    location: location,
-    address: address.value,
-    maxGuests: +basics[0].value.value,
-    bedrooms: +basics[1].value.value,
-    bed: +basics[2].value.value,
-    bathrooms: +basics[3].value.value,
-    amenities: amenitie.value,
-    name: title.value,
-    description: description.value,
-    highlight: highlight.value,
-    highlightDetail: detailHighlight.value,
-    pricePerNight: +price.value,
-    images: images.getAll("images"),
-  };
+  const formData = new FormData();
+  formData.append("propertyCategory", iconName.value);
+  formData.append("propertyType", placeName.value);
+  formData.append("location[coordinates][0]", lag.value);
+  formData.append("location[coordinates][1]", lat.value);
+  formData.append(
+    "location[formattedAddress]",
+    address.value + " " + appartment.value
+  );
+  formData.append("location[city]", city.value);
+  formData.append("location[state]", city.value);
+  formData.append("location[zipcode]", zipcode.value);
+  formData.append("location[country]", country.value);
+  formData.append("address", address.value);
+  formData.append("maxGuests", +basics[0].value.value);
+  formData.append("bedrooms", +basics[1].value.value);
+  formData.append("bed", +basics[2].value.value);
+  formData.append("bathrooms", +basics[3].value.value);
+  formData.append("name", title.value);
+  formData.append("description", description.value);
+  formData.append("highlight", highlight.value);
+  formData.append("highlightDetail", detailHighlight.value);
+  formData.append("pricePerNight", +price.value);
+  amenitie.value.forEach((amenity) => {
+    formData.append(`amenities[]`, amenity);
+  });
+  photos.value.forEach((photo) => {
+    formData.append(`images`, photo);
+  });
+
   const token = Cookies.get("token");
+
   try {
     const response = await axios.post("property", formData, {
       headers: {
@@ -522,29 +521,34 @@ const createProperty = async () => {
 .v-container {
   max-width: 100%;
 }
+
 hr {
   margin-block-start: 0.5em;
   margin-block-end: 0.5em;
   border-style: inset;
   border-width: 1px;
 }
+
 .filter-border:hover {
   background-color: #f7f8f8;
   border-color: #f8395a;
   border-width: 2px;
   transition: 0.2s ease;
 }
+
 .filter-box:hover {
   background-color: #f7f8f8;
   border-color: #f8395a;
   border-width: 2px;
   transition: 0.2s ease;
 }
+
 .counter:hover {
   cursor: pointer;
   color: #f8395a;
   transition: 0.2s ease;
 }
+
 :deep(
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
@@ -554,6 +558,7 @@ hr {
   transition: background-color 5000s;
   -webkit-text-fill-color: #000000 !important;
 }
+
 .field-width {
   max-width: 360px;
 }
