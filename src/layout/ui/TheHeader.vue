@@ -24,6 +24,7 @@
         rounded="pill"
       ></v-text-field>
       <v-spacer></v-spacer>
+      <router-link to="list-property">Become Host</router-link>
       <v-btn
         v-if="$vuetify.display.xs"
         icon="mdi-dots-vertical"

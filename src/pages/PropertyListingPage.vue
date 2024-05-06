@@ -137,6 +137,19 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col cols="12" class="field-width">
+                  <p class="tw-mb-1 tw-font-bold tw-pb-2">State</p>
+                  <v-text-field
+                    clear-icon="mdi-close-circle"
+                    placeholder="City"
+                    variant="outlined"
+                    clearable
+                    :rules="[required]"
+                    v-model="state"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
             </v-container>
 
             <h3 class="tw-text-lg tw-font-bold tw-mt-3 tw-mb-5">
@@ -318,6 +331,7 @@
           </div>
 
           <v-btn
+            :loading="loading"
             class="tw-mt-10 tw-text-xl"
             color="#f8395a"
             size="large"
@@ -339,7 +353,11 @@ import { plases } from "../data";
 import Map from "../components/Map.vue";
 import axios from "../store/axios";
 import Cookies from "js-cookie";
+import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
+const router = useRouter();
 const iconClass =
   "filter-border tw-border tw-w-28 tw-h-24 tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
 
@@ -349,6 +367,7 @@ const placeClass =
 const amenitieClass =
   "filter-border tw-border tw-w-52 tw-h-[90px] tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col ";
 
+const loading = ref(false);
 const iconName = ref("");
 const amenitie = ref([]);
 const placeName = ref("");
@@ -356,13 +375,14 @@ const guest = ref(1);
 const bedroom = ref(1);
 const bathroom = ref(1);
 const beds = ref(1);
-const form = ref(1);
+const form = ref("");
 const address = ref("");
 const city = ref("");
+const state = ref("");
 const zipcode = ref("");
 const country = ref("");
-const lag = ref();
-const lat = ref();
+const lag = ref(0);
+const lat = ref(0);
 const appartment = ref("");
 const photos = ref([]);
 const imagePriview = ref([]);
@@ -421,19 +441,25 @@ const setPlaceName = (name) => {
 };
 
 const setAmenitie = (name) => {
-  if (amenitie.value.includes(name)) {
-    return;
+  const index = amenitie.value.indexOf(name);
+  if (index !== -1) {
+    amenitie.value.splice(index, 1);
   } else {
     amenitie.value.push(name);
   }
 };
 
+const newPhotos = [];
 const previewImage = () => {
   for (let i = 0; i < photos.value.length; i++) {
     const file = photos.value[i];
     const render = new FileReader();
     render.onload = (e) => {
       imagePriview.value.push(e.target.result);
+      newPhotos.push(file);
+      if (newPhotos.length === photos.value.length) {
+        photos.value = newPhotos;
+      }
     };
     render.readAsDataURL(file);
   }
@@ -441,11 +467,13 @@ const previewImage = () => {
 
 const removeImage = (index) => {
   imagePriview.value.splice(index, 1);
+  photos.value.splice(index, 1);
 };
 
 const setLocationFileds = (locationDetails) => {
   address.value = locationDetails.streetAddress;
   city.value = locationDetails.city;
+  state.value = locationDetails.state;
   zipcode.value = locationDetails.zipcode;
   country.value = locationDetails.country;
   lag.value = locationDetails.lag;
@@ -460,11 +488,20 @@ const descriptionRule = (value) => {
 const reset = () => {
   form.value.reset();
   photos.value = [];
+  iconName.value = "";
+  amenitie.value = [];
+  placeName.value = "";
+  guest.value = 1;
+  bedroom.value = 1;
+  bathroom.value = 1;
+  beds.value = 1;
+  imagePriview.value = [];
+  lat.value = 0;
+  lag.value = 0;
 };
-
 const createProperty = async () => {
   if (!(await form.value.validate()).valid) return;
-
+  loading.value = true;
   if (!iconName || !placeName || amenitie.length === 0) {
     iconName.value === "Other";
     placeName.value === "An entire place";
@@ -481,7 +518,7 @@ const createProperty = async () => {
     address.value + " " + appartment.value
   );
   formData.append("location[city]", city.value);
-  formData.append("location[state]", city.value);
+  formData.append("location[state]", state.value);
   formData.append("location[zipcode]", zipcode.value);
   formData.append("location[country]", country.value);
   formData.append("address", address.value);
@@ -509,10 +546,28 @@ const createProperty = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    if (response.status === 201) {
+      loading.value = false;
+      router.push("/");
+    }
     console.log(response);
   } catch (err) {
-    console.log(err);
+    if (
+      typeof err.response.data.message === "string" &&
+      err.response.data.message.includes("geo")
+    ) {
+      toast.error("Please pick a location from the map.");
+    }
+    if (typeof err.response.data.message === "string") {
+      toast.error(err.response.data.message);
+    }
+    if (Array.isArray(err.response.data.message)) {
+      toast.error("fill all fields and try again!!");
+    } else {
+      toast.error("Something went wrong. Please try again.");
+    }
   }
+  loading.value = false;
   reset();
 };
 </script>

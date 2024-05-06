@@ -63,6 +63,7 @@ const onMapClick = (e) => {
       marker.setPopupContent(popupContent);
       const locationDetails = {
         city: address.city || "",
+        state: address.state || "",
         country: address.country || "",
         zipcode: address.postcode || "",
         streetAddress: data.results[0].formatted || "",

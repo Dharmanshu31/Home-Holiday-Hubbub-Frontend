@@ -38,7 +38,7 @@ export const icons = [
   { name: "mdi-waves", text: "Lakefront" },
   { name: "mdi-ski", text: "Ski-in/out" },
   { name: "mdi-castle", text: "Castles" },
-  { name: "mdi-beach", text: "Caves" },
+  { name: "mdi-hoop-house", text: "Caves" },
   { name: "mdi-campfire", text: "Camping" },
   { name: "mdi-snowflake", text: "Arctic" },
   { name: "mdi-cactus", text: "Desert" },

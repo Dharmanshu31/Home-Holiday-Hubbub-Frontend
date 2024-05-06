@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div>Title</div>
+    <div>{{ response.name }}</div>
     <div>Photo</div>
     <h2></h2>
     <p></p>
@@ -47,7 +47,21 @@
   </v-container>
 </template>
 
-<script setup></script>
+<script setup>
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+const response = ref({});
+const store = useStore();
+const route = useRoute();
+onMounted(async () => {
+  const res = await store.dispatch("getOneProperty", route.params.propertyId);
+  response.value = res.data;
+  toast.success("Done");
+});
+</script>
 
 <style scoped>
 hr {

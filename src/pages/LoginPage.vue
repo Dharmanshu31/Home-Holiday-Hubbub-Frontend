@@ -106,6 +106,7 @@ const login = async () => {
     password: formData.value.password,
   });
   if (response.status === 201) {
+    loading.value = false;
     router.push("/");
   }
   if (response.response && response.response.status === 400) {

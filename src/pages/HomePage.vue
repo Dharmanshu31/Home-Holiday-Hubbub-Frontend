@@ -65,13 +65,11 @@
       </v-col>
     </v-row>
   </v-container>
-  <v-container class="tw-w-full tw-mt-8">
-    <v-row>
-      <v-col xs="12" sm="6" md="4" lg="3" v-for="(item, i) in items" :key="i">
-        <HomeCard :item="item" />
-      </v-col>
-    </v-row>
-  </v-container>
+  <div class="tw-mt-8 tw-flex tw-flex-wrap tw-gap-8 tw-justify-center">
+    <div v-for="(item, i) in items" :key="i">
+      <HomeCard :item="item" />
+    </div>
+  </div>
   <br />
   <br />
 </template>
