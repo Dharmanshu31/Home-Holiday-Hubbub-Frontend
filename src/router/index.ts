@@ -8,6 +8,7 @@ import WishListPage from "../pages/WishListPage.vue";
 import ReservationPage from "../pages/ReservationPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import SignUpPage from "../pages/SignUpPage.vue";
+import NotFound from "../pages/NotFound.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -27,6 +28,7 @@ export const router = createRouter({
     { path: "/reservations/:ownerId", component: ReservationPage },
     { path: "/login", component: LoginPage },
     { path: "/signUp", component: SignUpPage },
+    { path: "/notFound", component: NotFound },
     { path: "/:notFound(.*)", redirect: "/" },
   ],
 });

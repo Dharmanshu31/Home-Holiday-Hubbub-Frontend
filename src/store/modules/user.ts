@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import { router } from "../../router";
 import axios from "../axios";
+import { ActionContext, Commit } from "vuex";
 
 interface formDataObj {
   name: string;
@@ -14,6 +15,12 @@ interface State {
   isLogin: boolean;
   id: string;
   role: string;
+  user: User;
+}
+interface User {
+  name: string;
+  email: string;
+  photo: string;
 }
 
 interface Decode {
@@ -27,6 +34,11 @@ export default {
       isLogin: false,
       id: "",
       role: "",
+      user: {
+        name: "",
+        email: "",
+        photo: "",
+      },
     };
   },
   mutations: {
@@ -60,7 +72,7 @@ export default {
     },
 
     //login user
-    async login(_, loginData: { email: string; password: string }) {
+    async login(loginData: { email: string; password: string }) {
       try {
         const response = await axios.post("auth/login", loginData);
         if (response.status === 201) {
@@ -70,6 +82,17 @@ export default {
       } catch (err) {
         return err;
       }
+    },
+    async getUser(context: ActionContext<State, Commit>) {
+      const token = Cookies.get("token");
+      const response = await axios("user/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      context.state.user.name = response.data.name;
+      context.state.user.email = response.data.email;
+      context.state.user.photo = response.data.photo;
     },
   },
 };

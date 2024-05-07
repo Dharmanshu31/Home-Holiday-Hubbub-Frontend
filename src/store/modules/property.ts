@@ -66,7 +66,6 @@ export default {
         const respone = await axios.get(`property/${id}`);
         return respone;
       } catch (err) {
-        console.log(err);
         return err;
       }
     },

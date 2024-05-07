@@ -16,7 +16,7 @@ import { useRoute } from "vue-router";
 import { computed } from "vue";
 const route = useRoute();
 const showHeaderAndFooter = computed(() => {
-  return ["/login", "/signUp"].includes(route.path);
+  return ["/login", "/signUp", "/notFound"].includes(route.path);
 });
 </script>
 
