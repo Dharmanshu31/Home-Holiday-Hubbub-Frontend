@@ -77,7 +77,7 @@
 <script setup>
 import { useStore } from "vuex";
 import HomeCard from "../components/HomeCard.vue";
-import Image from "../components/Image.vue";
+import Image from "../components/homePage/Image.vue";
 import { cImage } from "../data";
 import { images } from "../data";
 import { onMounted, ref } from "vue";
@@ -106,3 +106,4 @@ onMounted(async () => {
   }
 }
 </style>
+../components/homePage/Image.vue

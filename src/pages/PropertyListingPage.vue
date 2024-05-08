@@ -350,7 +350,7 @@ import { ref } from "vue";
 import { amenities } from "../data";
 import { icons } from "../data";
 import { plases } from "../data";
-import Map from "../components/Map.vue";
+import Map from "../components/listingPage/Map.vue";
 import axios from "../store/axios";
 import Cookies from "js-cookie";
 import { useRouter } from "vue-router";
@@ -618,3 +618,4 @@ hr {
   max-width: 360px;
 }
 </style>
+../components/listingPage/Map.vue

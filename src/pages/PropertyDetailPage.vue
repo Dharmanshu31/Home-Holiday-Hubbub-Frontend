@@ -33,12 +33,17 @@
       {{ response.maxGuests }} guests - {{ response.bedrooms }} bedroom(s) -
       {{ response.bed }} bed(s) - {{ response.bathrooms }} bathroom(s)
     </p>
-    <div class="tw-flex tw-text-base tw-text-center tw-mt-3">
+    <div class="tw-flex tw-text-xl tw-text-center tw-mt-3">
       <v-icon icon="mdi-star" color="#f9a825"> </v-icon>
-      <div v-if="response.ratingsAverage > 0" class="tw-font-semibold tw-pl-1">
-        {{ response.ratingsAverage }}/5
+      <div
+        v-if="response.ratingsAverage > 0"
+        class="tw-font-semibold tw-pl-1 tw-mt-[2px]"
+      >
+        {{ response.ratingsAverage }} / 5
       </div>
-      <div v-else class="tw-font-semibold tw-pl-1">No reviews yet</div>
+      <div v-else class="tw-font-semibold tw-pl-1 tw-mt-[2px]">
+        No reviews yet
+      </div>
     </div>
     <hr />
     <div class="tw-flex tw-items-center tw-gap-5">
@@ -101,22 +106,34 @@
             >
           </div>
         </div>
-        <v-dialog v-model="dialog" width="auto">
-          <v-card width="1000" height="300" class="tw-text-center">
-            <v-card-title class="tw-font-bold"> Confirm And Pay </v-card-title>
+        <v-dialog v-model="dialog" width="auto" round>
+          <v-card
+            class="tw-text-center tw-w-[350px] tw-h-[370px] lg:tw-w-[500px]"
+          >
+            <v-card-title>
+              <h3
+                class="tw-font-extrabold tw-text-2xl tw-text-green-600 tw-mt-5"
+              >
+                CONFIRM AND PAY
+              </h3>
+              <hr class="tw-border tw-border-dotted" />
+            </v-card-title>
+            <h2 class="tw-font-extrabold tw-text-xl">
+              🎊 YOUR BOOKING DETAILS 🎊
+            </h2>
             <v-card-text>
               <h3 class="tw-text-xl tw-mb-2 tw-font-bold">
-                &#x20B9; {{ response.pricePerNight }} X {{ totalNights }} night
+                &#x20B9; {{ response.pricePerNight }} X {{ totalNights }} NIGHT
               </h3>
               <h3 class="tw-text-xl tw-mb-2 tw-font-bold">
-                Total price: &#x20B9;
+                TOTAL PRICE: &#x20B9;
                 {{ totalPrice }}
               </h3>
               <p class="tw-text-base tw-mb-2 tw-font-bold">
-                Start Date: {{ startDate }}
+                <span class="tw-font-extrabold">CHECK-IN:</span> {{ startDate }}
               </p>
               <p class="tw-text-base tw-mb-2 tw-font-bold">
-                End Date: {{ endDate }}
+                <span class="tw-font-extrabold">CHECK-OUT:</span> {{ endDate }}
               </p>
             </v-card-text>
             <v-btn @click="toggaleDialog()" color="#F8395A"
@@ -126,6 +143,26 @@
         </v-dialog>
       </div>
     </div>
+    <hr />
+    <div class="tw-flex tw-text-2xl tw-text-center tw-mt-3">
+      <v-icon icon="mdi-star" color="#f9a825"> </v-icon>
+      <div
+        v-if="response.ratingsAverage > 0"
+        class="tw-font-semibold tw-pl-1 tw-mt-1"
+      >
+        {{ response.ratingsAverage }}
+      </div>
+      <div v-else class="tw-font-semibold tw-pl-1 tw-mt-1">No reviews yet</div>
+      <div
+        v-if="response.ratingQuantity > 0"
+        class="tw-font-semibold tw-pl-1 tw-mt-1"
+      >
+        - {{ response.ratingQuantity }} reviews
+      </div>
+    </div>
+    <ReviewBar :ratings="ratings" />
+    <hr />
+    <Review />
   </v-container>
 </template>
 
@@ -134,7 +171,9 @@ import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { amenities } from "../data";
-import Calander from "../components/Calander.vue";
+import Calander from "../components/detailPage/Calander.vue";
+import ReviewBar from "../components/detailPage/ReviewBar.vue";
+import Review from "../components/detailPage/Review.vue";
 const router = useRouter();
 const response = ref({});
 const user = ref({});
@@ -143,11 +182,38 @@ const dialog = ref(false);
 const store = useStore();
 const route = useRoute();
 const like = ref(false);
+const ratings = ref({
+  one: 0,
+  two: 0,
+  three: 0,
+  four: 0,
+  five: 0,
+});
+
 onMounted(async () => {
   const res = await store.dispatch("getOneProperty", route.params.propertyId);
   response.value = res.data;
   if (res.response && res.response.status === 400) {
     router.replace("/notFound");
+  }
+  if (response.value.reviews) {
+    response.value.reviews.map((review) => {
+      if (review.rating >= 1 && review.rating < 2) {
+        ratings.value.one++;
+      }
+      if (review.rating >= 2 && review.rating < 3) {
+        ratings.value.two++;
+      }
+      if (review.rating >= 3 && review.rating < 4) {
+        ratings.value.three++;
+      }
+      if (review.rating >= 4 && review.rating < 5) {
+        ratings.value.four++;
+      }
+      if (review.rating === 5) {
+        ratings.value.five++;
+      }
+    });
   }
 });
 onMounted(() => {
@@ -187,3 +253,4 @@ hr {
   border-width: 1px;
 }
 </style>
+../components/listingPage/Calander.vue../components/listingPage/ReviewBar.vue
