@@ -162,7 +162,14 @@
     </div>
     <ReviewBar :ratings="ratings" />
     <hr />
-    <Review />
+    <div class="tw-grid tw-grid-cols-1 tw-gap-5 sm:tw-grid-cols-2">
+      <Review
+        v-for="(review, i) in response.reviews"
+        :review="review"
+        :id="response.id"
+        :key="i"
+      />
+    </div>
   </v-container>
 </template>
 
@@ -253,4 +260,3 @@ hr {
   border-width: 1px;
 }
 </style>
-../components/listingPage/Calander.vue../components/listingPage/ReviewBar.vue

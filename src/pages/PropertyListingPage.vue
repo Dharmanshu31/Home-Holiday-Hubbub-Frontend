@@ -618,4 +618,3 @@ hr {
   max-width: 360px;
 }
 </style>
-../components/listingPage/Map.vue

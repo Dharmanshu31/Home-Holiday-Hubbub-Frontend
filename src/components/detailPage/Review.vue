@@ -1,44 +1,49 @@
 <template>
-  <div>
-    <v-card class="tw-max-w-[500px] tw-max-h-[300px]" elevation="6">
-      <v-card-text>
-        <div class="tw-flex tw-items-center">
-          <v-avatar size="60">
-            <v-img
-              alt="John"
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
-            ></v-img>
-          </v-avatar>
-          <h2 class="tw-text-xl tw-mx-3">John</h2>
-        </div>
-        <div class="tw-flex tw-mt-2">
-          <v-rating
-            v-model="rating"
-            active-color="yellow-accent-4"
-            size="20"
-            disabled
-          ></v-rating>
-          <p class="tw-ml-2 tw-font-bold tw-text-base">
-            {{
-              new Date("2024-05-08T13:59:50.784Z").toLocaleDateString("en-US", {
-                month: "short",
-                day: "2-digit",
-                year: "numeric",
-              })
-            }}
-          </p>
-        </div>
-        <p class="tw-mt-2 tw-text-lg tw-flex tw-flex-wrap tw-font-semibold">
-          Really good Airbnb for staycation. Quiet and beautiful location. Staff
-          is really helpful and responsive.
+  <v-card class="tw-w-[550px] tw-h-[200px]" hover>
+    <v-card-text>
+      <div class="tw-flex tw-items-center">
+        <v-avatar size="60">
+          <v-img
+            alt="John"
+            :src="`../../assets/users/${props.review.user.photo}`"
+          ></v-img>
+        </v-avatar>
+        <h2 class="tw-text-xl tw-mx-3">{{ props.review.user.name }}</h2>
+      </div>
+      <div class="tw-flex tw-mt-2">
+        <v-rating
+          v-model="props.review.rating"
+          active-color="yellow-accent-4"
+          size="20"
+          disabled
+        ></v-rating>
+        <p class="tw-ml-2 tw-font-bold tw-text-base">
+          {{
+            new Date(`${props.review.createdAt}`).toLocaleDateString("en-US", {
+              month: "short",
+              day: "2-digit",
+              year: "numeric",
+            })
+          }}
         </p>
-      </v-card-text>
-    </v-card>
-  </div>
+      </div>
+      <p class="tw-mt-2 tw-text-lg tw-flex tw-flex-wrap tw-font-semibold">
+        {{ props.review.review }}
+      </p>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { computed, onMounted } from "vue";
 
-const rating = ref(3);
+const props = defineProps({
+  review: Object,
+  id: String,
+});
+
+onMounted(() => {
+  const id = computed(() => props.id);
+  console.log(id.value);
+});
 </script>

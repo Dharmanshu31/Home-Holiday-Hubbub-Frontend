@@ -106,4 +106,3 @@ onMounted(async () => {
   }
 }
 </style>
-../components/homePage/Image.vue
