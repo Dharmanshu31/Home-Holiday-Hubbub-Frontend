@@ -49,12 +49,13 @@
     <div class="tw-flex tw-items-center tw-gap-5">
       <v-avatar size="60">
         <v-img
-          :alt="user.name"
-          :src="`../../assets/users/${user.photo}`"
+          v-if="response.owner"
+          :alt="response.owner.name"
+          :src="`../../assets/users/${response.owner.photo}`"
         ></v-img>
       </v-avatar>
-      <h3 class="tw-font-bold tw-text-base sm:tw-text-lg">
-        Hosted by {{ user.name }}
+      <h3 v-if="response.owner" class="tw-font-bold tw-text-base sm:tw-text-lg">
+        Hosted by {{ response.owner.name }}
       </h3>
     </div>
     <hr />
@@ -162,13 +163,36 @@
     </div>
     <ReviewBar :ratings="ratings" />
     <hr />
-    <div class="tw-grid tw-grid-cols-1 tw-gap-5 sm:tw-grid-cols-2">
-      <Review
-        v-for="(review, i) in response.reviews"
-        :review="review"
-        :id="response.id"
-        :key="i"
-      />
+    <div class="tw-grid tw-grid-cols-1 tw-gap-5 xl:tw-grid-cols-2">
+      <Review v-if="response.id" :id="response.id" />
+    </div>
+    <hr style="margin-top: 50px" />
+    <DetailMap
+      v-if="response.location"
+      :lagLat="response.location.coordinates"
+    />
+    <h1 class="tw-mt-5 tw-text-2xl tw-font-extrabold">Where you’ll be</h1>
+    <p class="tw-mt-3 tw-text-xl tw-font-semibold" v-if="response.location">
+      {{ response.location.city }} , {{ response.location.state }} ,
+      {{ response.location.country }}
+    </p>
+    <p class="tw-mt-3 tw-text-xl tw-font-semibold" v-if="response.location">
+      {{ response.location.formattedAddress }}
+    </p>
+    <h1 class="tw-mt-5 tw-text-2xl tw-font-extrabold">Contect Host</h1>
+    <div class="tw-flex tw-gap-8 tw-mt-3">
+      <a
+        v-if="response.owner"
+        class="tw-text-3xl"
+        :href="'mailto:' + response.owner.email"
+        ><v-btn icon="mdi-gmail" color="red"></v-btn
+      ></a>
+      <a
+        v-if="response.owner"
+        class="tw-text-3xl"
+        :href="'tel:' + response.owner.phone"
+        ><v-btn icon="mdi-phone-plus" color="green"></v-btn
+      ></a>
     </div>
   </v-container>
 </template>
@@ -181,9 +205,10 @@ import { amenities } from "../data";
 import Calander from "../components/detailPage/Calander.vue";
 import ReviewBar from "../components/detailPage/ReviewBar.vue";
 import Review from "../components/detailPage/Review.vue";
+import DetailMap from "../components/detailPage/DetailMap.vue";
+
 const router = useRouter();
 const response = ref({});
-const user = ref({});
 const selectedDate = ref([new Date()]);
 const dialog = ref(false);
 const store = useStore();
@@ -222,10 +247,6 @@ onMounted(async () => {
       }
     });
   }
-});
-onMounted(() => {
-  store.dispatch("getUser");
-  user.value = store.state.user.user;
 });
 const startDate = computed(() =>
   new Date(selectedDate.value[0]).toDateString()

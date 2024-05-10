@@ -39,6 +39,14 @@
                 :rules="[required, emailRule]"
                 type="email"
               ></CustomText>
+              <CustomText
+                v-model="formData.phone"
+                name="phone"
+                label="Phone"
+                required
+                :rules="[required]"
+                type="text"
+              ></CustomText>
               <v-text-field
                 v-model="formData.password"
                 name="password"
@@ -125,6 +133,7 @@ const formData = ref({
   firstName: "",
   lastName: "",
   email: "",
+  phone: "",
   password: "",
   confirmPassword: "",
   role: "",
@@ -200,6 +209,7 @@ const submitForm = async () => {
     formData.value.firstName + " " + formData.value.lastName
   );
   formDataObj.append("email", formData.value.email);
+  formDataObj.append("phone", formData.value.phone);
   formDataObj.append("password", formData.value.password);
   formDataObj.append("confirmPassword", formData.value.confirmPassword);
   formDataObj.append("role", formData.value.role);
@@ -207,6 +217,7 @@ const submitForm = async () => {
     formDataObj.append("photo", formData.value.photo);
   }
   const response = await store.dispatch("signUp", formDataObj);
+  console.log(response);
   if (response.code && response.code === "ERR_NETWORK") {
     toast.error("Network Error!! try again letter");
   }
