@@ -44,7 +44,7 @@
                 name="phone"
                 label="Phone"
                 required
-                :rules="[required]"
+                :rules="[required, phone]"
                 type="text"
               ></CustomText>
               <v-text-field
@@ -170,6 +170,10 @@ const required = (value) => !!value || "Field is required !!";
 const emailRule = (value) =>
   /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
   "Email must be a valid email address";
+
+//phone validation
+const phone = (value) =>
+  /^\d{10}$/.test(value) || "Please enter a valid phone number";
 
 //password validation
 const passwordRule = (value) =>

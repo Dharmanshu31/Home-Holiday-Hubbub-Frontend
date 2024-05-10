@@ -322,7 +322,7 @@
                     variant="outlined"
                     clearable
                     class="tw-max-w-[200px]"
-                    :rules="[required]"
+                    :rules="[required, priceRule]"
                     type="number"
                   ></v-text-field>
                 </v-col>
@@ -481,6 +481,8 @@ const setLocationFileds = (locationDetails) => {
 };
 
 const required = (value) => !!value || "Field is required !!";
+
+const priceRule = (value) => Number(value) >= 0 || "Enter valid price!!";
 const descriptionRule = (value) => {
   const words = value.trim().split(/\s+/).length;
   return words > 15 || "Must be more than 15 words.";

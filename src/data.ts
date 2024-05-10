@@ -54,13 +54,13 @@ export const plases = [
     icon: "mdi-home-account",
   },
   {
-    name: "Room(s)",
-    dis: "Guests have their own room in a house, plus access to shared places",
-    icon: "mdi-door-open",
+    name: "Meals Provided",
+    dis: "Guests have their own room in a house plus Guests are provided with meals by the host during their stay",
+    icon: "mdi-food",
   },
   {
-    name: "A Shared Room",
-    dis: "Guests sleep in a room or common area that maybe shared with you or others",
+    name: "Shared Some Room With Host",
+    dis: "Guests have their own room plus shared some place with host",
     icon: "mdi-account-group",
   },
 ];
