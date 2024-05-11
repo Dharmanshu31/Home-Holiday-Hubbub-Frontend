@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="tw-mt-12">
     <div class="tw-flex tw-justify-between tw-items-center">
       <h1 class="tw-text-2xl sm:tw-text-4xl tw-font-bold">
         {{ response.name }}

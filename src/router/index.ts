@@ -20,7 +20,11 @@ export const router = createRouter({
     {
       path: "/property",
       component: PropertyPage,
-      children: [{ path: ":propertyId", component: PropertyDetailPage }],
+      // children: [{ path: ":propertyId", component: PropertyDetailPage }],
+    },
+    {
+      path: "/property/::propertyId",
+      component: PropertyDetailPage,
     },
     { path: "/list-property", component: PropertyListingPage },
     { path: "/trip-history/:userId", component: PropertyHistoryPage },
