@@ -4,15 +4,15 @@
       <v-col>
         <v-carousel height="300" touch hide-delimiters class="slideBtn">
           <v-carousel-item
-            v-for="(item, i) in item.images"
+            v-for="(image, i) in item.images"
             :key="i"
-            :src="`/assets/properts/${item}`"
+            :src="`/assets/properts/${image}`"
             cover
           >
             <v-icon
               class="tw-float-right tw-mx-2 tw-my-2"
               :color="liked ? '#F56040' : '#ffffff'"
-              @click="toggleLike"
+              @click="toggleLike(),like(item._id)"
               :icon="liked ? 'mdi-heart' : 'mdi-heart-outline'"
             ></v-icon>
           </v-carousel-item>
@@ -26,7 +26,7 @@
 
       <v-card-text>
         <div class="tw-text-base">{{ item.propertyCategory }}</div>
-        <div class="tw-text-base">
+        <div class="tw-text-base" v-if="item.location">
           {{ item.location.city }} , {{ item.location.state }}
         </div>
         <div class="tw-font-bold tw-text-base tw-mt-2">
@@ -46,14 +46,21 @@
 
 <script setup>
 import { ref } from "vue";
+import { useStore } from "vuex";
 const liked = ref(false);
+const store=useStore()
 defineProps({
   item: {},
 });
 
-function toggleLike() {
+const toggleLike=()=>{
   liked.value = !liked.value;
 }
+
+const like=(propertyId)=>{
+  store.dispatch('likeTheProperty',propertyId)
+}
+
 </script>
 <style scoped>
 :deep(.slideBtn .v-btn--icon.v-btn--size-default) {

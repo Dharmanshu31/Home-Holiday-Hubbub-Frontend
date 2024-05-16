@@ -101,10 +101,11 @@ const reset = () => {
 const login = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
-  const response = await store.dispatch("login", {
+  const loginData={
     email: formData.value.email,
     password: formData.value.password,
-  });
+  }
+  const response = await store.dispatch("login",loginData );
   if (response.status === 201) {
     loading.value = false;
     router.push("/");

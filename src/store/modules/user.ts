@@ -72,7 +72,7 @@ export default {
     },
 
     //login user
-    async login(loginData: { email: string; password: string }) {
+    async login(_,loginData: { email: string; password: string }) {
       try {
         const response = await axios.post("auth/login", loginData);
         if (response.status === 201) {

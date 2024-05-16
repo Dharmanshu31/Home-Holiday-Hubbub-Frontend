@@ -221,7 +221,6 @@ const submitForm = async () => {
     formDataObj.append("photo", formData.value.photo);
   }
   const response = await store.dispatch("signUp", formDataObj);
-  console.log(response);
   if (response.code && response.code === "ERR_NETWORK") {
     toast.error("Network Error!! try again letter");
   }

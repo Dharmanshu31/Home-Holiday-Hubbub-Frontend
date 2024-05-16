@@ -1,8 +1,10 @@
 import { Commit } from "vuex";
 import axios from "../axios";
-
+import Cookies from "js-cookie";
+const token = Cookies.get("token");
 interface State {
   propertys: Property[];
+  like: boolean;
 }
 interface Property {
   _id: string;
@@ -41,6 +43,7 @@ export default {
   state(): State {
     return {
       propertys: [],
+      like: false,
     };
   },
   mutations: {
@@ -65,6 +68,29 @@ export default {
       try {
         const respone = await axios.get(`property/${id}`);
         return respone;
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //fetch filter proerty 
+    async getFilterProperty(_, params: {}) {
+      try {
+        const respone = await axios.get(`property`, { params });
+        return respone;
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //add like
+    async likeTheProperty(_, propertyId: string) {
+      try {
+        await axios.post(`user/wishList/${propertyId}`,_,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       } catch (err) {
         return err;
       }
