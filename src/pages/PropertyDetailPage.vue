@@ -8,7 +8,7 @@
         <v-btn
           class="tw-float-right tw-mx-2 tw-my-2"
           :color="like ? '#F56040' : '#000'"
-          @click="like = !like"
+          @click="(like = !like), liked(route.params.propertyId)"
           :icon="like ? 'mdi-heart' : 'mdi-heart-outline'"
           variant="elevated"
         ></v-btn>
@@ -144,7 +144,48 @@
         </v-dialog>
       </div>
     </div>
+
     <hr />
+    <v-btn color="black" @click="reviewModel = !reviewModel">Add Review</v-btn>
+    <v-dialog max-width="500px" v-model="reviewModel">
+      <v-card>
+        <h1 class="tw-text-center tw-font-bold tw-text-xl tw-mt-4">
+          Write Your Review
+        </h1>
+        <hr />
+        <v-card-text>
+          <p>Select Ratings</p>
+          <v-rating
+            class="tw-px-7 tw-text-xl"
+            v-model="addRating"
+            active-color="yellow-accent-4"
+            half-increments
+            size="60"
+            hover
+          ></v-rating>
+          <v-textarea
+            clear-icon="mdi-close-circle"
+            label="Write Review Here"
+            clearable
+            :rules="[required]"
+            v-model="writeReviewData"
+          ></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="red" variant="text" @click="reviewModel = !reviewModel"
+            >Cancel</v-btn
+          >
+          <v-btn
+            color="black"
+            variant="elevated"
+            @click="postReview(response.id)"
+            >Post</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <hr />
+
     <div class="tw-flex tw-text-2xl tw-text-center tw-mt-3">
       <v-icon icon="mdi-star" color="#f9a825"> </v-icon>
       <div
@@ -206,6 +247,10 @@ import Calander from "../components/detailPage/Calander.vue";
 import ReviewBar from "../components/detailPage/ReviewBar.vue";
 import Review from "../components/detailPage/Review.vue";
 import DetailMap from "../components/detailPage/DetailMap.vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+import axios from "../store/axios";
+import Cookies from "js-cookie";
 
 const router = useRouter();
 const response = ref({});
@@ -214,6 +259,9 @@ const dialog = ref(false);
 const store = useStore();
 const route = useRoute();
 const like = ref(false);
+const reviewModel = ref(false);
+const addRating = ref(1);
+const writeReviewData = ref("");
 const ratings = ref({
   one: 0,
   two: 0,
@@ -248,6 +296,49 @@ onMounted(async () => {
     });
   }
 });
+
+const liked = (propertyId) => {
+  store.dispatch("likeTheProperty", propertyId);
+};
+
+//reqired validation
+const required = (value) => !!value || "Can't post empty review !!";
+
+//like
+onMounted(async () => {
+  const res = await store.dispatch("getWishList", route.params.propertyId);
+  like.value = res;
+  if (res.response && res.response.data.message) {
+    toast.error("Login to Get Access");
+    // router.replace('/login')
+  }
+});
+
+const token = Cookies.get("token");
+//post the review
+const postReview = async (propertyId) => {
+  if (writeReviewData.value === "") {
+    return;
+  }
+  const data = {
+    review: writeReviewData.value,
+    rating: addRating.value,
+  };
+  try {
+    const res = await axios.post(`property/${propertyId}/review`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.status === 201) {
+      reviewModel.value = false;
+      toast.success("Review Posted Successfully");
+    }
+  } catch (err) {
+    toast.error("Somthing Wents Wrong Try Again letter!!");
+  }
+};
+
 const startDate = computed(() =>
   new Date(selectedDate.value[0]).toDateString()
 );

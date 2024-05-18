@@ -12,7 +12,7 @@
             <v-icon
               class="tw-float-right tw-mx-2 tw-my-2"
               :color="liked ? '#F56040' : '#ffffff'"
-              @click="toggleLike(),like(item._id)"
+              @click="toggleLike(), like(item._id)"
               :icon="liked ? 'mdi-heart' : 'mdi-heart-outline'"
             ></v-icon>
           </v-carousel-item>
@@ -45,22 +45,35 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
+import { useRouter } from "vue-router";
+
 const liked = ref(false);
-const store=useStore()
-defineProps({
+const store = useStore();
+const router=useRouter()
+const props = defineProps({
   item: {},
 });
 
-const toggleLike=()=>{
+const toggleLike = () => {
   liked.value = !liked.value;
-}
+};
 
-const like=(propertyId)=>{
-  store.dispatch('likeTheProperty',propertyId)
-}
+const like = (propertyId) => {
+  store.dispatch("likeTheProperty", propertyId);
+};
 
+onMounted(async () => {
+  const res = await store.dispatch("getWishList", props.item._id);
+  liked.value = res;
+  if(res.response && res.response.data.message){
+    toast.error('Login to Get Access')
+    // router.replace('/login')
+  }
+});
 </script>
 <style scoped>
 :deep(.slideBtn .v-btn--icon.v-btn--size-default) {

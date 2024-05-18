@@ -73,7 +73,7 @@ export default {
       }
     },
 
-    //fetch filter proerty 
+    //fetch filter proerty
     async getFilterProperty(_, params: {}) {
       try {
         const respone = await axios.get(`property`, { params });
@@ -86,11 +86,25 @@ export default {
     //add like
     async likeTheProperty(_, propertyId: string) {
       try {
-        await axios.post(`user/wishList/${propertyId}`,_,{
+        await axios.post(`user/wishList/${propertyId}`, _, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //get wishlist
+    async getWishList(_, propertyId: string) {
+      try {
+        const response=await axios.get(`user/onlyWishList`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data.wishList.includes(propertyId)
       } catch (err) {
         return err;
       }

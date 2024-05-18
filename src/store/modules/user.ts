@@ -21,6 +21,7 @@ interface User {
   name: string;
   email: string;
   photo: string;
+  phone: string;
 }
 
 interface Decode {
@@ -38,6 +39,7 @@ export default {
         name: "",
         email: "",
         photo: "",
+        phone: "",
       },
     };
   },
@@ -72,7 +74,7 @@ export default {
     },
 
     //login user
-    async login(_,loginData: { email: string; password: string }) {
+    async login(_, loginData: { email: string; password: string }) {
       try {
         const response = await axios.post("auth/login", loginData);
         if (response.status === 201) {
@@ -84,15 +86,20 @@ export default {
       }
     },
     async getUser(context: ActionContext<State, Commit>) {
-      const token = Cookies.get("token");
-      const response = await axios("user/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      context.state.user.name = response.data.name;
-      context.state.user.email = response.data.email;
-      context.state.user.photo = response.data.photo;
+      try {
+        const token = Cookies.get("token");
+        const response = await axios.get("user/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        context.state.user.name = response.data.name;
+        context.state.user.email = response.data.email;
+        context.state.user.photo = response.data.photo;
+        context.state.user.phone = response.data.phone;
+      } catch (err) {
+        return err;
+      }
     },
   },
 };
