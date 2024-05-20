@@ -137,7 +137,10 @@
                 <span class="tw-font-extrabold">CHECK-OUT:</span> {{ endDate }}
               </p>
             </v-card-text>
-            <v-btn @click="toggaleDialog()" color="#F8395A"
+            <v-btn
+              @click="confirmBooking()"
+              :loading="paymentLoading"
+              color="#F8395A"
               >Confirm Booking</v-btn
             >
           </v-card>
@@ -262,6 +265,7 @@ const like = ref(false);
 const reviewModel = ref(false);
 const addRating = ref(1);
 const writeReviewData = ref("");
+const paymentLoading = ref(false);
 const ratings = ref({
   one: 0,
   two: 0,
@@ -350,6 +354,27 @@ const totalNights = computed(() => selectedDate.value.length);
 const totalPrice = computed(
   () => response.value.pricePerNight * totalNights.value
 );
+
+const confirmBooking = async () => {
+  paymentLoading.value = true;
+  try {
+    const res = await axios.post(
+      `booking/${route.params.propertyId}/${startDate.value} - ${endDate.value}`,
+      "",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.status === 201) {
+      window.location.href = res.data.url;
+    }
+  } catch (err) {
+    toast.error("Somthing wents wrong try again latter!!");
+  }
+  paymentLoading.value = false;
+};
 
 const getAmenityIcon = (amenityText) => {
   const foundAmenity = amenities.find(

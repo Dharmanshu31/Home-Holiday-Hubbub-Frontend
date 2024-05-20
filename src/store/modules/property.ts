@@ -96,15 +96,32 @@ export default {
       }
     },
 
-    //get wishlist
+    //show wishList from all property
     async getWishList(_, propertyId: string) {
       try {
-        const response=await axios.get(`user/onlyWishList`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return response.data.wishList.includes(propertyId)
+        if (token) {
+          const response = await axios.get(`user/onlyWishList`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          return response.data.wishList.includes(propertyId);
+        }
+      } catch (err) {
+        return err;
+      }
+    },
+    //get user wishlist
+    async getUserWishList() {
+      try {
+        if (token) {
+          const response = await axios.get(`user/wishList`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          return response.data
+        }
       } catch (err) {
         return err;
       }

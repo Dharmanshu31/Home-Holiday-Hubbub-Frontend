@@ -69,10 +69,10 @@ const like = (propertyId) => {
 onMounted(async () => {
   const res = await store.dispatch("getWishList", props.item._id);
   liked.value = res;
-  if(res.response && res.response.data.message){
-    toast.error('Login to Get Access')
-    // router.replace('/login')
-  }
+  // if(res.response && res.response.data.message){
+  //   toast.error('Login to Get Access')
+  //   // router.replace('/login')
+  // }
 });
 </script>
 <style scoped>

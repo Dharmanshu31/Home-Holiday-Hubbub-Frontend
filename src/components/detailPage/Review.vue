@@ -10,6 +10,11 @@
             ></v-img>
           </v-avatar>
           <h2 class="tw-text-xl tw-mx-3">{{ review.user.name }}</h2>
+          <div v-if="review.user._id === id">
+            <v-btn append-icon="mdi-progress-pencil" variant="text">
+              <span class="tw-text-xs">edit</span></v-btn
+            >
+          </div>
         </div>
         <div class="tw-flex tw-mt-2">
           <v-rating
@@ -49,6 +54,10 @@ import axios from "../../store/axios";
 import { onMounted, ref } from "vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { useStore } from "vuex";
+const store = useStore();
+const id = ref();
+id.value = store.state.user.id;
 const props = defineProps({
   id: String,
 });

@@ -24,7 +24,7 @@ export const router = createRouter({
       // children: [{ path: ":propertyId", component: PropertyDetailPage }],
     },
     {
-      path: "/property/::propertyId",
+      path: "/property/:propertyId",
       component: PropertyDetailPage,
     },
     { path: "/list-property", component: PropertyListingPage },

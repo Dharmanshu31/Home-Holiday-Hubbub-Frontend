@@ -20,36 +20,130 @@
         rounded="pill"
       ></v-text-field> -->
       <v-spacer></v-spacer>
-      <router-link to="list-property">Become Host</router-link>
-      <v-btn class="tw-float-right"
-        ><router-link to="/login">Login</router-link></v-btn
+      <v-btn v-if="token && decode && decode.role !== 'user'">
+        <router-link to="list-property">Become Host</router-link>
+      </v-btn>
+      <v-btn
+        :prepend-icon="toggleDrawer ? 'mdi-menu-close' : 'mdi-menu'"
+        class="drawer"
+        @click="toggleDrawer = !toggleDrawer"
       >
+        <v-avatar size="30">
+          <v-img
+            :src="`../../assets/users/${userData.photo || 'defualt.jpeg'}`"
+          ></v-img>
+        </v-avatar>
+      </v-btn>
     </v-app-bar>
+    <v-navigation-drawer
+      v-model="toggleDrawer"
+      temporary
+      location="right"
+      style="height: max-content"
+    >
+      <v-list-item
+        :prepend-avatar="`../../assets/users/${
+          userData.photo || 'defualt.jpeg'
+        }`"
+        :title="userData.name || 'Guest'"
+      ></v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list>
+        <v-list-item>
+          <router-link to="/" class="listHover">Home</router-link>
+        </v-list-item>
+        <v-list-item v-if="!token">
+          <router-link class="listHover" to="/login">Login</router-link>
+        </v-list-item>
+        <v-list-item v-if="!token">
+          <router-link class="listHover" to="/signUp">Sign Up</router-link>
+        </v-list-item>
+        <v-list-item>
+          <router-link class="listHover" to="/property"
+            >All Propertys</router-link
+          >
+        </v-list-item>
+        <v-list-item v-if="token && decode">
+          <router-link class="listHover" :to="`/wish-list/${decode.id}`"
+            >WishList</router-link
+          >
+        </v-list-item>
+        <v-list-item v-if="token && decode && decode.role !== 'user'">
+          <router-link class="listHover" :to="`/reservations/${decode.id}`"
+            >Reservation List</router-link
+          >
+        </v-list-item>
+        <v-list-item v-if="token && decode">
+          <router-link class="listHover" :to="`/trip-history/${decode.id}`"
+            >Trip List</router-link
+          >
+        </v-list-item>
+        <v-list-item v-if="token && decode && decode.role !== 'user'">
+          <router-link class="listHover" to="/list-property"
+            >Become A Host</router-link
+          >
+        </v-list-item>
+        <v-list-item v-if="token">
+          <router-link class="listHover" to="/userProfile">Profile</router-link>
+        </v-list-item>
+        <v-list-item v-if="token">
+          <span
+            class="tw-text-pinkRed tw-cursor-pointer listHover"
+            @click="logOut()"
+            >Log Out</span
+          >
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
   </v-container>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 const store = useStore();
+const router = useRouter();
+const userData = ref();
+const decode = ref(null);
 
 //next 3 line for decode and store token value to VueX
 const token = Cookies.get("token");
 if (token) {
-  const decode = jwtDecode(token);
-  store.commit("setUser", { id: decode.id, role: decode.role });
+  decode.value = jwtDecode(token);
+  store.commit("setUser", { id: decode.value.id, role: decode.value.role });
 }
+const getUser = async () => {
+  const res = await store.dispatch("getUser");
+  if (res && res.response && res.response.status === 401) {
+    router.replace("/");
+  }
+};
+userData.value = store.state.user.user;
 
-const search = ref("");
-const onClick = () => {
-  console.log(search.value);
+const toggleDrawer = ref(false);
+
+onMounted(() => {
+  getUser();
+});
+
+const logOut = () => {
+  store.commit("logOut");
+  router.push("/");
+  window.location.reload();
 };
-const onSearch = (e) => {
-  setTimeout(() => console.log(e.target.value), 2000);
-};
+// const search = ref("");
+// const onClick = () => {
+//   console.log(search.value);
+// };
+// const onSearch = (e) => {
+//   setTimeout(() => console.log(e.target.value), 2000);
+// };
 </script>
 
 <style scoped>
@@ -69,9 +163,17 @@ const onSearch = (e) => {
 :deep(.v-field__append-inner) {
   padding-bottom: 7px;
 }
-/* @media (max-width: 959.98px) {
-  :deep(.v-toolbar__content > .v-toolbar-title) {
-    margin-inline-start: auto;
-  }
-} */
+
+.drawer {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 25px;
+  color: black;
+  width: 76px;
+}
+
+.listHover:hover {
+  color: #024950;
+  font-size: large;
+}
 </style>

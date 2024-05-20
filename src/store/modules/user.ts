@@ -12,7 +12,6 @@ interface formDataObj {
   photo: string;
 }
 interface State {
-  isLogin: boolean;
   id: string;
   role: string;
   user: User;
@@ -32,7 +31,6 @@ interface Decode {
 export default {
   state(): State {
     return {
-      isLogin: false,
       id: "",
       role: "",
       user: {
@@ -48,14 +46,18 @@ export default {
     setUser(state: State, decode: Decode) {
       state.id = decode.id;
       state.role = decode.role;
-      state.isLogin = true;
     },
 
     //logOut user
     logOut(state: State) {
-      state.isLogin = false;
       state.id = "";
       state.role = "";
+      state.user = {
+        name: "",
+        email: "",
+        photo: "",
+        phone: "",
+      };
       Cookies.remove("token");
     },
   },
@@ -88,15 +90,17 @@ export default {
     async getUser(context: ActionContext<State, Commit>) {
       try {
         const token = Cookies.get("token");
-        const response = await axios.get("user/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        context.state.user.name = response.data.name;
-        context.state.user.email = response.data.email;
-        context.state.user.photo = response.data.photo;
-        context.state.user.phone = response.data.phone;
+        if (token) {
+          const response = await axios.get("user/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          context.state.user.name = response.data.name;
+          context.state.user.email = response.data.email;
+          context.state.user.photo = response.data.photo;
+          context.state.user.phone = response.data.phone;
+        }
       } catch (err) {
         return err;
       }
