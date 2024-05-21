@@ -10,6 +10,7 @@ import LoginPage from "../pages/LoginPage.vue";
 import SignUpPage from "../pages/SignUpPage.vue";
 import NotFound from "../pages/NotFound.vue";
 import UserProfile from "../pages/UserProfile.vue";
+import AdminPanal from "../pages/AdminPanal.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -34,6 +35,7 @@ export const router = createRouter({
     { path: "/login", component: LoginPage },
     { path: "/signUp", component: SignUpPage },
     { path: "/userProfile", component: UserProfile },
+    { path: "/admin", component: AdminPanal },
     { path: "/notFound", component: NotFound },
     { path: "/:notFound(.*)", redirect: "/" },
   ],

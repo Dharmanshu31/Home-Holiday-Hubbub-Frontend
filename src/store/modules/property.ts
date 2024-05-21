@@ -1,4 +1,4 @@
-import { Commit } from "vuex";
+import { ActionContext, Commit } from "vuex";
 import axios from "../axios";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
@@ -120,7 +120,7 @@ export default {
               Authorization: `Bearer ${token}`,
             },
           });
-          return response.data
+          return response.data;
         }
       } catch (err) {
         return err;

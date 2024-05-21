@@ -88,6 +88,9 @@
         <v-list-item v-if="token">
           <router-link class="listHover" to="/userProfile">Profile</router-link>
         </v-list-item>
+        <v-list-item v-if="token && decode && decode.role === 'admin'">
+          <router-link class="listHover" to="/admin">Admin Panel</router-link>
+        </v-list-item>
         <v-list-item v-if="token">
           <span
             class="tw-text-pinkRed tw-cursor-pointer listHover"

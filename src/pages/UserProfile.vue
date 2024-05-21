@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-mt-20">
+  <div class="tw-mt-20 tw-mb-5">
     <div class="tw-flex tw-justify-center tw-text-center">
       <v-card class="tw-min-w-[400px] tw-min-h-[640px]" elevation="15">
         <div class="tw-flex tw-justify-center tw-h-[85%]">
@@ -7,10 +7,23 @@
             <v-avatar size="150" class="tw-mt-4">
               <v-img
                 v-if="userData"
-                :src="`../../assets/users/${userData.photo}`"
+                :src="
+                  previewProfileImg
+                    ? previewProfileImg
+                    : `../../assets/users/${userData.photo}`
+                "
               ></v-img>
-              <!-- <v-icon icon="mdi-arrow-up"></v-icon> -->
             </v-avatar>
+            <label for="profileImage">
+              <v-badge icon="mdi-lead-pencil" class="tw-cursor-pointer">
+                <input
+                  id="profileImage"
+                  type="file"
+                  class="tw-hidden"
+                  @change="profileImage"
+                />
+              </v-badge>
+            </label>
             <div class="tw-text-center">
               <p class="tw-mt-4 tw-font-bold tw-text-lg" v-if="userData">
                 {{ userData.name }}
@@ -100,6 +113,19 @@ const last = ref("");
 const email = ref("");
 const phone = ref("");
 const showDialog = ref(false);
+const updateProfileImg = ref(null);
+const previewProfileImg = ref(null);
+const profileImage = (e) => {
+  const file = e.target.files[0];
+  updateProfileImg.value = file;
+  if (file) {
+    const render = new FileReader();
+    render.onload = (e) => {
+      previewProfileImg.value = e.target.result;
+    };
+    render.readAsDataURL(file);
+  }
+};
 
 //email validation
 const emailRule = (value) =>
@@ -121,6 +147,11 @@ role.value = store.state.user.role;
 
 onMounted(() => {
   getUser();
+  first.value = store.state.user.user.name.split(" ")[0];
+  last.value = store.state.user.user.name.split(" ")[1];
+  email.value = store.state.user.user.email;
+  phone.value = store.state.user.user.phone;
+  role.value = store.state.user.role;
 });
 
 watch(userData.value, () => {
@@ -167,6 +198,10 @@ const updateUser = async () => {
   }
   if (phone.value !== userData.value.phone) {
     formData.append("phone", phone.value);
+    hasChanged = true;
+  }
+  if (updateProfileImg.value) {
+    formData.append("photo", updateProfileImg.value);
     hasChanged = true;
   }
   if (hasChanged) {

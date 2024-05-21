@@ -94,7 +94,11 @@
           How long do you want to stay?
         </h2>
         <div class="tw-mt-9 tw-flex tw-flex-col tw-items-center">
-          <Calander v-model="selectedDate" />
+          <Calander
+            v-model="selectedDate"
+            v-if="response && response.bookings"
+            :bookingDate="response.bookings"
+          />
           <div class="tw-mt-9 tw-text-center">
             <v-btn
               @click="toggaleDialog()"
@@ -148,8 +152,8 @@
       </div>
     </div>
 
-    <hr />
-    <v-btn color="black" @click="reviewModel = !reviewModel">Add Review</v-btn>
+    <hr v-if="token" />
+    <v-btn color="black" @click="reviewModel = !reviewModel" v-if="token">Add Review</v-btn>
     <v-dialog max-width="500px" v-model="reviewModel">
       <v-card>
         <h1 class="tw-text-center tw-font-bold tw-text-xl tw-mt-4">
@@ -242,7 +246,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { amenities } from "../data";
@@ -312,7 +316,7 @@ const required = (value) => !!value || "Can't post empty review !!";
 onMounted(async () => {
   const res = await store.dispatch("getWishList", route.params.propertyId);
   like.value = res;
-  if (res.response && res.response.data.message) {
+  if (res && res.response && res.response.data.message) {
     toast.error("Login to Get Access");
     // router.replace('/login')
   }
@@ -388,6 +392,31 @@ const toggaleDialog = () => {
 const clearDate = () => {
   selectedDate.value = [new Date()];
 };
+let isHandlingUpdate = false;
+
+watch(selectedDate, (newVal) => {
+  if (isHandlingUpdate) return; // Exit if already handling an update
+  isHandlingUpdate = true; // Set the flag to true
+  let err = false;
+  for (let date of newVal) {
+    const currentDate = new Date(date);
+    for (let booking of response.value.bookings) {
+      const start = new Date(booking.startDate);
+      const end = new Date(booking.endDate);
+      if (currentDate >= start && currentDate <= end) {
+        err = true;
+        break;
+      }
+    }
+  }
+  if (err) {
+    toast.error("Please Select Date Which Are Not Booked");
+    clearDate();
+  }
+  nextTick(() => {
+    isHandlingUpdate = false;
+  });
+});
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <v-footer class="tw-flex tw-flex-col tw-mt-[100px]" color="#f7f7f7">
+  <v-footer class="tw-flex tw-flex-col" color="#f7f7f7">
     <div>
       <v-btn
         v-for="icon in icons"

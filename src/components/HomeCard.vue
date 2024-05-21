@@ -29,8 +29,22 @@
         <div class="tw-text-base" v-if="item.location">
           {{ item.location.city }} , {{ item.location.state }}
         </div>
-        <div class="tw-font-bold tw-text-base tw-mt-2">
+        <div class="tw-font-bold tw-text-base tw-mt-2" v-if="!history">
           &#x20B9; {{ item.pricePerNight }} night
+        </div>
+        <div class="tw-font-bold tw-text-base tw-mt-2" v-else>
+          Totel Price: &#x20B9; {{ history.totalPrice }}
+        </div>
+        <div v-if="history" class="tw-font-bold tw-text-base tw-mt-2">
+          <p>StartDate: {{ new Date(history.startDate).toDateString() }}</p>
+          <p>EndDate: {{ new Date(history.endDate).toDateString() }}</p>
+        </div>
+        <div v-if="reservation" class="tw-font-bold tw-text-base tw-mt-2">
+          <p>StartDate: {{ new Date(reservation.startDate).toDateString() }}</p>
+          <p>EndDate: {{ new Date(reservation.endDate).toDateString() }}</p>
+        </div>
+        <div v-if="reservation" class="tw-font-bold tw-text-sm tw-mt-2">
+          <p>Guest Name: {{ reservation.userId.name }}</p>
         </div>
         <div class="tw-flex tw-mt-3 tw-text-base tw-text-center">
           <v-icon icon="mdi-star" color="#f9a825"> </v-icon>
@@ -53,11 +67,12 @@ import { useRouter } from "vue-router";
 
 const liked = ref(false);
 const store = useStore();
-const router=useRouter()
+const router = useRouter();
 const props = defineProps({
-  item: {},
+  item: Object,
+  history: Object,
+  reservation: Object,
 });
-
 const toggleLike = () => {
   liked.value = !liked.value;
 };

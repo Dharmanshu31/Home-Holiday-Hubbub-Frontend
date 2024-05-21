@@ -8,25 +8,47 @@
         Your Trip List
       </v-col>
     </v-row>
-    <v-row>
-      <v-col xs="12" sm="6" md="4" lg="3" v-for="(item, i) in items" :key="i">
-        <HomeCard :item="item" />
-      </v-col>
-    </v-row>
+    <div
+      class="tw-mt-8 tw-grid md:tw-grid-cols-2 xl:tw-grid-cols-3 tw-gap-8 tw-justify-center"
+    >
+      <div v-for="(item, i) in items" :key="i">
+        <HomeCard
+          :item="item.propertyId"
+          :history="item"
+        />
+      </div>
+    </div>
   </v-container>
 </template>
 
 <script setup>
 import HomeCard from "../components/HomeCard.vue";
+import { useStore } from "vuex";
+import { ref, onMounted } from "vue";
+import axios from "../store/axios";
+import Cookies from "js-cookie";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
-const items = [
-  {
-    title: "Australian beaches",
-    location: "Alisoana, Sydny Aus",
-    type: "Betch",
-    price: "12000",
-  },
-];
+const store = useStore();
+const items = ref([]);
+
+onMounted(async () => {
+  try {
+    const token = Cookies.get("token");
+    const userId = store.state.user.id;
+    const res = await axios.get(`booking/user/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    items.value = res.data;
+  } catch (err) {
+    if (err && err.response) {
+      toast.error("Somthing Wents wrong Try Again Latter");
+    }
+  }
+});
 </script>
 
 <style></style>

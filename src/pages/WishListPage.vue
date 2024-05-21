@@ -15,16 +15,16 @@
 
 <script setup>
 import HomeCard from "../components/HomeCard.vue";
-import { useStore } from "vuex";
-import { ref, onMounted } from "vue";
+  import { useStore } from "vuex";
+  import { ref, onMounted } from "vue";
 
-const store = useStore();
-const items = ref([]);
+  const store = useStore();
+  const items = ref([]);
 
-onMounted(async () => {
-  const res = await store.dispatch("getUserWishList");
-  items.value = res.wishList;
-});
+  onMounted(async () => {
+    const res = await store.dispatch("getUserWishList");
+    items.value = res.wishList;
+  });
 </script>
 
 <style></style>
