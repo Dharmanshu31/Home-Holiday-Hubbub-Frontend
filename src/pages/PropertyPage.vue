@@ -31,9 +31,9 @@
           </v-slide-group-item>
         </v-slide-group>
       </div>
-      <div class="tw-w-[20%]">
+      <div class="tw-w-[10%]">
         <v-btn
-          v-if="$vuetify.display.smAndUp"
+          v-if="$vuetify.display.mdAndUp"
           prepend-icon="mdi-tune"
           class="tw-mt-8"
           variant="outlined"
@@ -47,6 +47,23 @@
           class="tw-mt-7"
           variant="text"
           @click="filterToggle = !filterToggle"
+        ></v-btn>
+      </div>
+      <div class="tw-w-[10%]">
+        <v-btn
+          v-if="$vuetify.display.mdAndUp"
+          prepend-icon="mdi-crosshairs-gps"
+          class="tw-mt-9 tw-ml-2"
+          variant="outlined"
+          @click="propertyNearMe()"
+          >Near Me</v-btn
+        >
+        <v-btn
+          v-else
+          icon="mdi-crosshairs-gps"
+          class="tw-mt-7"
+          variant="text"
+          @click="propertyNearMe()"
         ></v-btn>
       </div>
     </div>
@@ -68,7 +85,7 @@
           </div>
         </div>
         <hr />
-        <div class="tw-overflow-y-scroll tw-max-h-[534px] tw-rounded-3xl">
+        <div class="tw-overflow-y-scroll tw-max-h-[480px] tw-rounded-3xl">
           <div>
             <div class="tw-p-7">
               <p class="md:tw-text-2xl tw-font-bold tw-text-xl">
@@ -211,6 +228,17 @@
             </v-btn>
           </div>
         </div>
+        <hr />
+        <div>
+          <v-btn
+            class="btnGrad tw-float-right tw-mr-16 tw-mt-2"
+            @click="applyFilter"
+            >Apply Filters</v-btn
+          >
+          <v-btn class="tw-ml-3 tw-mt-2" variant="text" @click="clearFilter"
+            >Clear All
+          </v-btn>
+        </div>
       </div>
     </v-dialog>
     <div class="tw-min-h-[600px]">
@@ -220,7 +248,7 @@
     </div>
     <v-pagination
       v-model="page"
-      :length="Math.ceil(property.length / 10) + 10"
+      :length="Math.ceil(property.length / 10)"
       :total-visible="7"
       active-color="#024950"
     ></v-pagination>
@@ -228,7 +256,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, watchEffect } from "vue";
+import { ref, onMounted, reactive, watch, computed } from "vue";
 import { icons, amenities, plases } from "../data";
 import HomeCard from "../components/HomeCard.vue";
 import { useStore } from "vuex";
@@ -238,10 +266,10 @@ data.unshift({ name: "mdi-earth", text: "All" });
 const iconName = ref("");
 const filterToggle = ref(false);
 const typePlace = ref("");
-const bedrooms = ref(1);
-const beds = ref(1);
-const bathrooms = ref(1);
-const rating = ref(1);
+const bedrooms = ref(0);
+const beds = ref(0);
+const bathrooms = ref(0);
+const rating = ref(0);
 const priceUp = ref(false);
 const priceDown = ref(false);
 const sortDateNew = ref(false);
@@ -258,7 +286,6 @@ const propertyCategoryFilter = (iconText) => {
   } else {
     iconName.value = iconText;
   }
-  console.log(iconName.value);
 };
 const typeProperty = (propertyTypeName) => {
   if (typePlace.value === propertyTypeName) {
@@ -266,46 +293,142 @@ const typeProperty = (propertyTypeName) => {
   } else {
     typePlace.value = propertyTypeName;
   }
-  console.log(typePlace.value);
 };
 const setBedroom = (num) => {
-  if (bedrooms.value === num) {
+  if (bedrooms.value === num || bedrooms.value === 8) {
     bedrooms.value = 0;
   } else {
     bedrooms.value = num;
   }
-  console.log(bedrooms.value);
 };
 const setBed = (num) => {
-  if (beds.value === num) {
+  if (beds.value === num || beds.value === 8) {
     beds.value = 0;
   } else {
     beds.value = num;
   }
-  console.log(beds.value);
 };
 const setBathroom = (num) => {
-  if (bathrooms.value === num) {
+  if (bathrooms.value === num || bathrooms.value === 8) {
     bathrooms.value = 0;
   } else {
     bathrooms.value = num;
   }
-  console.log(bathrooms.value);
 };
+const isPropertyType = computed(() => {
+  return icons.some((item) => item.text === iconName.value);
+});
+const isAmenities = computed(() => {
+  return amenities.some((amenitie) => amenitie.text === iconName.value);
+});
 
 //fething filter Date
-const params = reactive({ page: page.value, limit: 2 });
+const params = reactive({ page: page.value, limit: 10 });
 const fetchProperty = async (params) => {
   const response = await store.dispatch("getFilterProperty", params);
-  console.log(response);
+  // console.log(response);
   property.value = response.data.properties;
 };
 
-watchEffect(() => {
-  params.page = page.value;
+//property near Me
+const propertyNearMe = async () => {
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const lat = position.coords.latitude;
+    const lag = position.coords.longitude;
+    const response = await store.dispatch("getPropertyNearMe", { lat, lag });
+    property.value = response;
+  });
+};
+
+//applying filter
+const applyFilter = () => {
+  let hasChange = false;
+  if (typePlace.value && typePlace.value !== "") {
+    params.propertyCategory = typePlace.value;
+    hasChange = true;
+  }
+  if (bedrooms.value !== 0) {
+    params.bedrooms = bedrooms.value;
+    hasChange = true;
+  }
+  if (beds.value !== 0) {
+    params.bed = beds.value;
+    hasChange = true;
+  }
+  if (bathrooms.value !== 0) {
+    params.bathrooms = bathrooms.value;
+    hasChange = true;
+  }
+  if (rating.value !== 0) {
+    params.ratingsAverage = rating.value;
+    hasChange = true;
+  }
+  if (priceUp.value) {
+    params.sort = "-pricePerNight";
+    hasChange = true;
+  }
+  if (priceDown.value) {
+    params.sort = "pricePerNight";
+    hasChange = true;
+  }
+  if (sortDateNew.value) {
+    params.sort = "-createdAt";
+    hasChange = true;
+  }
+  if (sortDateOld.value) {
+    params.sort = "createdAt";
+    hasChange = true;
+  }
+  if (hasChange) {
+    fetchProperty(params);
+  }
+  filterToggle.value = false;
+};
+
+//clear the filter
+const clearFilter = () => {
+  typePlace.value = "";
+  bedrooms.value = 0;
+  beds.value = 0;
+  bathrooms.value = 0;
+  rating.value = 0;
+  priceUp.value = false;
+  priceDown.value = false;
+  sortDateNew.value = false;
+  sortDateOld.value = false;
+};
+
+//fatch data for pagination
+onMounted(() => {
   fetchProperty(params);
 });
 
+//watch on page and iconName for request
+watch([page, iconName], () => {
+  if (iconName.value === "All") {
+    delete params.propertyCategory;
+    delete params.amenities;
+  }
+  if (isPropertyType.value || iconName.value === "") {
+    if (iconName.value !== "") {
+      params.propertyCategory = iconName.value;
+      delete params.amenities;
+    } else {
+      delete params.propertyCategory;
+    }
+  }
+  if (isAmenities.value || iconName.value === "") {
+    if (iconName.value !== "") {
+      params.amenities = iconName.value;
+      delete params.propertyCategory;
+    } else {
+      delete params.amenities;
+    }
+  }
+
+  params.page = page.value;
+  fetchProperty(params);
+});
 </script>
 
 <style scoped>

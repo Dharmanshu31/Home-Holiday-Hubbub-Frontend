@@ -153,7 +153,9 @@
     </div>
 
     <hr v-if="token" />
-    <v-btn color="black" @click="reviewModel = !reviewModel" v-if="token">Add Review</v-btn>
+    <v-btn color="black" @click="reviewModel = !reviewModel" v-if="token"
+      >Add Review</v-btn
+    >
     <v-dialog max-width="500px" v-model="reviewModel">
       <v-card>
         <h1 class="tw-text-center tw-font-bold tw-text-xl tw-mt-4">
@@ -183,10 +185,14 @@
             >Cancel</v-btn
           >
           <v-btn
+            v-if="!oldReviewData"
             color="black"
             variant="elevated"
             @click="postReview(response.id)"
             >Post</v-btn
+          >
+          <v-btn v-else color="black" variant="elevated" @click="updateReview(response.id)"
+            >Update</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -212,7 +218,11 @@
     <ReviewBar :ratings="ratings" />
     <hr />
     <div class="tw-grid tw-grid-cols-1 tw-gap-5 xl:tw-grid-cols-2">
-      <Review v-if="response.id" :id="response.id" />
+      <Review
+        v-if="response.id"
+        :id="response.id"
+        @editreview="collectOldReview"
+      />
     </div>
     <hr style="margin-top: 50px" />
     <DetailMap
@@ -278,6 +288,7 @@ const ratings = ref({
   five: 0,
 });
 
+//fatching data and seting value for reviewBar
 onMounted(async () => {
   const res = await store.dispatch("getOneProperty", route.params.propertyId);
   response.value = res.data;
@@ -305,6 +316,7 @@ onMounted(async () => {
   }
 });
 
+//for showing the like value for wishlist
 const liked = (propertyId) => {
   store.dispatch("likeTheProperty", propertyId);
 };
@@ -323,6 +335,7 @@ onMounted(async () => {
 });
 
 const token = Cookies.get("token");
+
 //post the review
 const postReview = async (propertyId) => {
   if (writeReviewData.value === "") {
@@ -347,6 +360,44 @@ const postReview = async (propertyId) => {
   }
 };
 
+// collecting old review data
+const oldReviewData = ref();
+const collectOldReview = (oldReview) => {
+  reviewModel.value = true;
+  oldReviewData.value = oldReview;
+  addRating.value = oldReview.rating;
+  writeReviewData.value = oldReview.review;
+};
+
+//update reviewData
+const updateReview = async (propertyId) => {
+  if (writeReviewData.value === "") {
+    return;
+  }
+  const data = {
+    review: writeReviewData.value,
+    rating: addRating.value,
+  };
+  try {
+    const res = await axios.patch(
+      `property/${propertyId}/review/${oldReviewData.value.reviewId}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.status === 200) {
+      reviewModel.value = false;
+      toast.success("Review Updated Successfully");
+    }
+  } catch (err) {
+    toast.error("Somthing Wents Wrong Try Again letter!!");
+  }
+};
+
+//formating dates
 const startDate = computed(() =>
   new Date(selectedDate.value[0]).toDateString()
 );
@@ -359,6 +410,7 @@ const totalPrice = computed(
   () => response.value.pricePerNight * totalNights.value
 );
 
+//booking the property
 const confirmBooking = async () => {
   paymentLoading.value = true;
   try {
@@ -380,20 +432,26 @@ const confirmBooking = async () => {
   paymentLoading.value = false;
 };
 
+//showing amenities icon
 const getAmenityIcon = (amenityText) => {
   const foundAmenity = amenities.find(
     (amenitie) => amenitie.text === amenityText
   );
   return foundAmenity ? foundAmenity.name : "";
 };
+
+//show hidde diloage
 const toggaleDialog = () => {
   dialog.value = !dialog.value;
 };
+
+//cleare the date in booking
 const clearDate = () => {
   selectedDate.value = [new Date()];
 };
 let isHandlingUpdate = false;
 
+//watch for checking the date value not add in range
 watch(selectedDate, (newVal) => {
   if (isHandlingUpdate) return; // Exit if already handling an update
   isHandlingUpdate = true; // Set the flag to true

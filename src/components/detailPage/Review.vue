@@ -11,7 +11,11 @@
           </v-avatar>
           <h2 class="tw-text-xl tw-mx-3">{{ review.user.name }}</h2>
           <div v-if="review.user._id === id">
-            <v-btn append-icon="mdi-progress-pencil" variant="text">
+            <v-btn
+              append-icon="mdi-progress-pencil"
+              variant="text"
+              @click="editreview(review._id, review.rating, review.review)"
+            >
               <span class="tw-text-xs">edit</span></v-btn
             >
           </div>
@@ -22,6 +26,7 @@
             active-color="yellow-accent-4"
             size="20"
             disabled
+            half-increments
           ></v-rating>
           <p class="tw-ml-2 tw-font-bold tw-text-base">
             {{
@@ -61,10 +66,17 @@ id.value = store.state.user.id;
 const props = defineProps({
   id: String,
 });
+const emit = defineEmits(["editreview"]);
 const reviews = ref([]);
 const limit = ref(6);
 const addMore = () => {
   limit.value += 6;
+};
+
+//edit review emit
+const editreview = (reviewId, rating, review) => {
+  const oldReview = { reviewId, rating, review };
+  emit("editreview", oldReview);
 };
 onMounted(async () => {
   try {

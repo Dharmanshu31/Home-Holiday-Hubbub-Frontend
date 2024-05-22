@@ -126,5 +126,24 @@ export default {
         return err;
       }
     },
+
+    //property near me
+    async getPropertyNearMe(_, { lat, lag }: { lat: string; lag: string }) {
+      try {
+        if (token) {
+          const response = await axios.get(
+            `property/near-me/distance/${lat},${lag}/unit/km`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          return response.data;
+        }
+      } catch (err) {
+        return err;
+      }
+    },
   },
 };
