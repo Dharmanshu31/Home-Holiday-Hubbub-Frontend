@@ -28,7 +28,11 @@ export const router = createRouter({
       path: "/property/:propertyId",
       component: PropertyDetailPage,
     },
-    { path: "/list-property", component: PropertyListingPage },
+    {
+      name: "listProperty",
+      path: "/list-property",
+      component: PropertyListingPage,
+    },
     { path: "/trip-history/:userId", component: PropertyHistoryPage },
     { path: "/wish-list/:userId", component: WishListPage },
     { path: "/reservations/:ownerId", component: ReservationPage },

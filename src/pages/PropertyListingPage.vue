@@ -71,7 +71,11 @@
               Where's your place located?
             </h3>
             <h1 class="tw-font-bold tw-mb-5">Pick Location from Map</h1>
-            <Map @locationSelected="setLocationFileds" />
+            <Map
+              @locationSelected="setLocationFileds"
+              :lag="property ? property.location.coordinates[0] : undefined"
+              :lat="property ? property.location.coordinates[1] : undefined"
+            />
             <v-container>
               <v-row>
                 <v-col>
@@ -275,7 +279,7 @@
                     variant="outlined"
                     clearable
                     class="tw-max-w-[600px]"
-                    rows="1"
+                    rows="5"
                     :rules="[required, descriptionRule]"
                   ></v-textarea>
                 </v-col>
@@ -304,7 +308,7 @@
                     variant="outlined"
                     clearable
                     class="tw-max-w-[600px]"
-                    rows="1"
+                    rows="5"
                     :rules="[required, descriptionRule]"
                   ></v-textarea>
                 </v-col>
@@ -331,6 +335,17 @@
           </div>
 
           <v-btn
+            v-if="store.state.property.oldPropertyData"
+            :loading="loading"
+            class="tw-mt-10 tw-text-xl"
+            color="#f8395a"
+            size="large"
+            rounded="xl"
+            @click="updatePropertyData"
+            >Update Property</v-btn
+          >
+          <v-btn
+            v-else
             :loading="loading"
             class="tw-mt-10 tw-text-xl"
             color="#f8395a"
@@ -339,6 +354,17 @@
             type="submit"
             >CREATE YOUR LISTING</v-btn
           >
+          <router-link to="/">
+          <v-btn
+            v-if="store.state.property.oldPropertyData"
+            class="tw-mt-10 md:tw-ml-10 tw-text-xl"
+            color="#f8395a"
+            size="large"
+            rounded="xl"
+            >Cancel Update</v-btn
+          >
+        </router-link>
+
         </v-form>
       </v-col>
     </v-row>
@@ -346,7 +372,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { amenities } from "../data";
 import { icons } from "../data";
 import { plases } from "../data";
@@ -356,6 +382,9 @@ import Cookies from "js-cookie";
 import { useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const router = useRouter();
 const iconClass =
@@ -501,6 +530,7 @@ const reset = () => {
   lat.value = 0;
   lag.value = 0;
 };
+const token = Cookies.get("token");
 const createProperty = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
@@ -517,7 +547,7 @@ const createProperty = async () => {
   formData.append("location[coordinates][1]", lat.value);
   formData.append(
     "location[formattedAddress]",
-    address.value + " " + appartment.value
+    address.value + ", " + appartment.value
   );
   formData.append("location[city]", city.value);
   formData.append("location[state]", state.value);
@@ -540,8 +570,6 @@ const createProperty = async () => {
     formData.append(`images`, photo);
   });
 
-  const token = Cookies.get("token");
-
   try {
     const response = await axios.post("property", formData, {
       headers: {
@@ -552,18 +580,15 @@ const createProperty = async () => {
       loading.value = false;
       router.push("/");
     }
-    console.log(response);
   } catch (err) {
     if (
       typeof err.response.data.message === "string" &&
       err.response.data.message.includes("geo")
     ) {
       toast.error("Please pick a location from the map.");
-    }
-    if (typeof err.response.data.message === "string") {
+    } else if (typeof err.response.data.message === "string") {
       toast.error(err.response.data.message);
-    }
-    if (Array.isArray(err.response.data.message)) {
+    } else if (Array.isArray(err.response.data.message)) {
       toast.error("fill all fields and try again!!");
     } else {
       toast.error("Something went wrong. Please try again.");
@@ -571,6 +596,116 @@ const createProperty = async () => {
   }
   loading.value = false;
   reset();
+};
+
+//repacing old data
+const property = store.state.property.oldPropertyData;
+onMounted(() => {
+  if (property) {
+    iconName.value = property.propertyCategory;
+    placeName.value = property.propertyType;
+    lag.value = property.location.coordinates[0];
+    lat.value = property.location.coordinates[1];
+    address.value = property.address;
+    const temp = property.location.formattedAddress.split(",");
+    appartment.value = temp[temp.length - 1];
+    city.value = property.location.city;
+    state.value = property.location.state;
+    zipcode.value = property.location.zipcode;
+    country.value = property.location.country;
+    basics[0].value.value = property.maxGuests;
+    basics[1].value.value = property.bedrooms;
+    basics[2].value.value = property.bed;
+    basics[3].value.value = property.bathrooms;
+    title.value = property.name;
+    description.value = property.description;
+    highlight.value = property.highlight;
+    detailHighlight.value = property.highlightDetail;
+    price.value = property.pricePerNight;
+    amenitie.value = property.amenities;
+    const addPath = property.images.map(
+      (image) => `../../assets/properts/${image}`
+    );
+    imagePriview.value = addPath;
+  }
+});
+//adding updated data
+const updatePropertyData = async () => {
+  if (!(await form.value.validate()).valid) return;
+  loading.value = true;
+
+  const formData = new FormData();
+  iconName.value !== property.propertyCategory &&
+    formData.append("propertyCategory", iconName.value);
+  placeName.value !== property.propertyType &&
+    formData.append("propertyType", placeName.value);
+  lag.value !== property.location.coordinates[0] &&
+    formData.append("location[coordinates][0]", lag.value);
+  lat.value !== property.location.coordinates[1] &&
+    formData.append("location[coordinates][1]", lat.value);
+  address.value + ", " + appartment.value !==
+    property.location.formattedAddress &&
+    formData.append(
+      "location[formattedAddress]",
+      address.value + ", " + appartment.value
+    );
+  city.value !== property.location.city &&
+    formData.append("location[city]", city.value);
+  state.value !== property.location.state &&
+    formData.append("location[state]", state.value);
+  zipcode.value !== property.location.zipcode &&
+    formData.append("location[zipcode]", zipcode.value);
+  country.value !== property.location.country &&
+    formData.append("location[country]", country.value);
+  address.value !== property.address &&
+    formData.append("address", address.value);
+  basics[0].value.value !== property.maxGuests &&
+    formData.append("maxGuests", +basics[0].value.value);
+  basics[1].value.value !== property.bedrooms &&
+    formData.append("bedrooms", +basics[1].value.value);
+  basics[2].value.value !== property.bed &&
+    formData.append("bed", +basics[2].value.value);
+  basics[3].value.value !== property.bathrooms &&
+    formData.append("bathrooms", +basics[3].value.value);
+  title.value !== property.name && formData.append("name", title.value);
+  description.value !== property.description &&
+    formData.append("description", description.value);
+  highlight.value !== property.highlight &&
+    formData.append("highlight", highlight.value);
+  detailHighlight.value !== property.highlightDetail &&
+    formData.append("highlightDetail", detailHighlight.value);
+  price.value !== property.pricePerNight &&
+    formData.append("pricePerNight", +price.value);
+  amenitie.value.forEach((amenity) => {
+    formData.append(`amenities[]`, amenity);
+  });
+  photos.value.forEach((photo) => {
+    formData.append(`images`, photo);
+  });
+
+  try {
+    const response = await axios.patch(`property/${property._id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 200) {
+      loading.value = false;
+      router.push("/");
+    }
+  } catch (err) {
+    if (
+      typeof err.response.data.message === "string" &&
+      err.response.data.message.includes("geo")
+    ) {
+      toast.error("Please pick a location from the map.");
+    } else if (Array.isArray(err.response.data.message)) {
+      toast.error("fill all fields and try again!!");
+    } else {
+      toast.error("Something went wrong. Please try again.");
+    }
+  }
+  loading.value = false;
 };
 </script>
 

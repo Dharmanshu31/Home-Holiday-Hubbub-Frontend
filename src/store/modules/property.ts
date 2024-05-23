@@ -5,6 +5,7 @@ const token = Cookies.get("token");
 interface State {
   propertys: Property[];
   like: boolean;
+  oldPropertyData: Property;
 }
 interface Property {
   _id: string;
@@ -44,12 +45,17 @@ export default {
     return {
       propertys: [],
       like: false,
+      oldPropertyData: null,
     };
   },
   mutations: {
     //set property
     getPoperty(state: State, data: Property[]): void {
       state.propertys = data;
+    },
+
+    setOldPropertyData(state: State, oldData: Property) {
+      state.oldPropertyData = oldData;
     },
   },
   actions: {
@@ -139,6 +145,22 @@ export default {
               },
             }
           );
+          return response.data;
+        }
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //get user wishlist
+    async deleteProperty(_, propertyId: string) {
+      try {
+        if (token) {
+          const response = await axios.delete(`property/${propertyId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           return response.data;
         }
       } catch (err) {

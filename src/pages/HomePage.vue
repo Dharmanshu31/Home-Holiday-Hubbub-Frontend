@@ -54,14 +54,16 @@
         :key="index"
         class="tw-flex tw-justify-center tw-gap-2"
         style="padding: 50px 0"
-      >
-        <Image
-          :link="image.link"
-          :image="image.image"
-          :alt="image.alt"
-          :text="image.text"
-          :path="image.path"
-        />
+        ><router-link
+          :to="{ path: 'property', query: { propertyCategory: image.text } }"
+        >
+          <Image
+            :image="image.image"
+            :alt="image.alt"
+            :text="image.text"
+            :path="image.path"
+          />
+        </router-link>
       </v-col>
     </v-row>
   </v-container>

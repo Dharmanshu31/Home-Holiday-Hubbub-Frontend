@@ -17,13 +17,22 @@ import { ref, onMounted, onUnmounted } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+const props = defineProps({
+  lat: Number,
+  lag: Number,
+});
 const map = ref(null);
 let marker = null;
 let emit = defineEmits(["locationSelected"]);
-
 onMounted(() => {
-  map.value = L.map(map.value).setView([21.1702, 72.8311], 13);
+  map.value = L.map(map.value).setView(
+    [props.lat ? props.lat : 21.1702, props.lag ? props.lag : 72.8311],
+    13
+  );
 
+  if (props.lag && props.lat) {
+    marker = L.marker([props.lat, props.lag]).addTo(map.value);
+  }
   L.tileLayer("https://tile.openstreetmap.de/{z}/{x}/{y}.png?lang=en", {
     maxZoom: 19,
   }).addTo(map.value);

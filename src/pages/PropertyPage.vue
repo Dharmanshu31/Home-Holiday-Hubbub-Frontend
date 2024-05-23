@@ -260,6 +260,7 @@ import { ref, onMounted, reactive, watch, computed } from "vue";
 import { icons, amenities, plases } from "../data";
 import HomeCard from "../components/HomeCard.vue";
 import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
 
 const data = icons.concat(amenities);
 data.unshift({ name: "mdi-earth", text: "All" });
@@ -277,6 +278,8 @@ const sortDateOld = ref(false);
 const page = ref(1);
 const property = ref([]);
 const store = useStore();
+const router = useRouter();
+
 
 const iconClass =
   "filter-border tw-border tw-w-[90px] tw-h-14 md:tw-w-[139px] md:tw-h-[71px] tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
@@ -324,6 +327,13 @@ const isAmenities = computed(() => {
 
 //fething filter Date
 const params = reactive({ page: page.value, limit: 10 });
+
+//apply filter from homePage
+const route = useRoute();
+if (route.query.propertyCategory) {
+  params.propertyCategory = route.query.propertyCategory;
+}
+
 const fetchProperty = async (params) => {
   const response = await store.dispatch("getFilterProperty", params);
   // console.log(response);
@@ -427,6 +437,17 @@ watch([page, iconName], () => {
   }
 
   params.page = page.value;
+
+  // Update the route query
+  if (params.propertyCategory !== route.query.propertyCategory) {
+    const newQuery = { ...route.query };
+    if (params.propertyCategory) {
+      newQuery.propertyCategory = params.propertyCategory;
+    } else {
+      delete newQuery.propertyCategory;
+    }
+    router.replace({ query: newQuery });
+  }
   fetchProperty(params);
 });
 </script>

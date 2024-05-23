@@ -55,7 +55,47 @@
         </div>
       </v-card-text>
     </router-link>
+    <div class="tw-justify-between tw-flex tw-mx-8 tw-my-4">
+      <v-btn
+        v-if="
+          store.state.user.role === 'admin' ||
+          store.state.user.id === item.owner
+        "
+        color="green"
+        append-icon="mdi-pencil"
+        variant="text"
+        @click="sendOldData(item)"
+        >Edit</v-btn
+      >
+      <v-btn
+        v-if="
+          store.state.user.role === 'admin' ||
+          store.state.user.id === item.owner
+        "
+        color="red"
+        append-icon="mdi-trash-can"
+        variant="outlined"
+        @click="showDialog = !showDialog"
+        >Delete</v-btn
+      >
+    </div>
   </v-card>
+  <v-dialog v-model="showDialog" max-width="500px">
+    <v-card>
+      <v-card-title class="headline">Confirm Delete</v-card-title>
+      <v-card-text>
+        Are you sure you want to delete this Property?
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="red" variant="text" @click="showDialog = false"
+          >Cancel</v-btn
+        >
+        <v-btn color="red" variant="text" @click="deleteProperty(item.id)"
+          >Delete</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -66,6 +106,7 @@ import "vue3-toastify/dist/index.css";
 import { useRouter } from "vue-router";
 
 const liked = ref(false);
+const showDialog = ref(false);
 const store = useStore();
 const router = useRouter();
 const props = defineProps({
@@ -81,6 +122,11 @@ const like = (propertyId) => {
   store.dispatch("likeTheProperty", propertyId);
 };
 
+const sendOldData = (item) => {
+  store.commit("setOldPropertyData", item);
+  router.push("list-property");
+};
+
 onMounted(async () => {
   const res = await store.dispatch("getWishList", props.item._id);
   liked.value = res;
@@ -89,6 +135,17 @@ onMounted(async () => {
   //   // router.replace('/login')
   // }
 });
+
+const deleteProperty = async (propertyId) => {
+  const res = await store.dispatch("deleteProperty", propertyId);
+  if (res === "") {
+    toast.success("Property Deleted Succesfully");
+    showDialog.value = false;
+  }
+  if (res && res.response && res.response.message) {
+    toast.error("Somthing Wrong Try Again Latter !!");
+  }
+};
 </script>
 <style scoped>
 :deep(.slideBtn .v-btn--icon.v-btn--size-default) {
