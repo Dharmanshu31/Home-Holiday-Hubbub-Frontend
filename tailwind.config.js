@@ -12,7 +12,7 @@ export default {
         five: "#AFDDE5",
         heading: "#24355a",
         newbg: "#f7f8f8",
-        footer: "#9f9a9a",
+        footer: "#e5e7eb",
         pinkRed: "#f8395a",
       },
     },

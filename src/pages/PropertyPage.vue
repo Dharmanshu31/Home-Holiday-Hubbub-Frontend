@@ -242,7 +242,7 @@
       </div>
     </v-dialog>
     <div class="tw-min-h-[600px]">
-      <div class="tw-mt-8 tw-flex tw-flex-wrap tw-gap-8 tw-justify-center">
+      <div class="tw-mt-8 tw-grid md:tw-grid-cols-2 xl:tw-grid-cols-3  tw-gap-8 tw-justify-center">
         <HomeCard v-for="(item, i) in property" :item="item" :key="i" />
       </div>
     </div>

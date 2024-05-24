@@ -87,6 +87,8 @@ export default {
         return err;
       }
     },
+
+    //get me function
     async getUser(context: ActionContext<State, Commit>) {
       try {
         const token = Cookies.get("token");
@@ -100,6 +102,24 @@ export default {
           context.state.user.email = response.data.email;
           context.state.user.photo = response.data.photo;
           context.state.user.phone = response.data.phone;
+        }
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //get all usre for admin
+    async getUserByAdmin(_, query: {}) {
+      try {
+        const token = Cookies.get("token");
+        if (token) {
+          const response = await axios.get("user/admin", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: query,
+          });
+          return response.data;
         }
       } catch (err) {
         return err;
