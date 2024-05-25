@@ -241,8 +241,13 @@
         </div>
       </div>
     </v-dialog>
+    <div class="tw-mx-2">
+      <FilterMap @logAndPosition="filterDistance" />
+    </div>
     <div class="tw-min-h-[600px]">
-      <div class="tw-mt-8 tw-grid md:tw-grid-cols-2 xl:tw-grid-cols-3  tw-gap-8 tw-justify-center">
+      <div
+        class="tw-mt-8 tw-grid md:tw-grid-cols-2 xl:tw-grid-cols-3 tw-gap-8 tw-justify-center"
+      >
         <HomeCard v-for="(item, i) in property" :item="item" :key="i" />
       </div>
     </div>
@@ -259,8 +264,11 @@
 import { ref, onMounted, reactive, watch, computed } from "vue";
 import { icons, amenities, plases } from "../data";
 import HomeCard from "../components/HomeCard.vue";
+import FilterMap from "../components/filterPage/FilterMap.vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 const data = icons.concat(amenities);
 data.unshift({ name: "mdi-earth", text: "All" });
@@ -279,7 +287,6 @@ const page = ref(1);
 const property = ref([]);
 const store = useStore();
 const router = useRouter();
-
 
 const iconClass =
   "filter-border tw-border tw-w-[90px] tw-h-14 md:tw-w-[139px] md:tw-h-[71px] tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
@@ -450,6 +457,19 @@ watch([page, iconName], () => {
   }
   fetchProperty(params);
 });
+
+//get property by distance
+const filterDistance = async ({ radius, lag, lat }) => {
+  const res = await store.dispatch("getDistancePorperty", {
+    radius: radius.value,
+    lag: lag.value,
+    lat: lat.value,
+  });
+  property.value = res;
+  if (res && res.response && res.response.data) {
+    toast.error("Geolocation is not supported by this browser");
+  }
+};
 </script>
 
 <style scoped>

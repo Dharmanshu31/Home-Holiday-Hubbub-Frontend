@@ -87,7 +87,7 @@
           (reservations || tripHistroy)
         "
         color="red"
-        append-icon="mdi-trash-can"
+        append-icon="mdi-emoticon-sad"
         variant="outlined"
         @click="showCancelBooking = !showCancelBooking"
         >Cancel Booking</v-btn
@@ -110,21 +110,24 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-dialog v-model="showCancelBooking" max-width="500px">
+  <v-dialog v-model="showCancelBooking" max-width="590px">
     <v-card>
       <v-card-title class="headline">Confirm Cancel Booking</v-card-title>
       <v-card-text>
         <p>Are you sure you want to Cancel Booking?</p>
         <p class="tw-text-red-600 tw-mt-9">
           Note:-If You Cancel The Booking The Payment Will Be Refuneded Under 15
-          Working Day
+          Working Day,And Can't Be Able to Cancel Booking after below 6 Day is
+          Remain from Booking Date
         </p>
       </v-card-text>
       <v-card-actions>
         <v-btn color="red" variant="text" @click="showCancelBooking = false"
           >Cancel</v-btn
         >
-        <v-btn color="red" variant="text" @click="cancelBooking">Delete</v-btn>
+        <v-btn color="red" variant="text" @click="cancelBooking"
+          >Refuned Booking</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

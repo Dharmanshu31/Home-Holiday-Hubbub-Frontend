@@ -167,5 +167,27 @@ export default {
         return err;
       }
     },
+
+    //distance property distance
+    async getDistancePorperty(
+      _,
+      { lat, lag, radius }: { lat: string; lag: string; radius: string }
+    ) {
+      try {
+        if (token) {
+          const response = await axios.get(
+            `property/near-me/distance/${radius}/${lat},${lag}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          return response.data;
+        }
+      } catch (err) {
+        return err;
+      }
+    },
   },
 };
