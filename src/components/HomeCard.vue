@@ -69,14 +69,28 @@
       >
       <v-btn
         v-if="
-          store.state.user.role === 'admin' ||
-          store.state.user.id === item.owner
+          (store.state.user.role === 'admin' ||
+            store.state.user.id === item.owner) &&
+          !reservations &&
+          !tripHistroy
         "
         color="red"
         append-icon="mdi-trash-can"
         variant="outlined"
         @click="showDialog = !showDialog"
         >Delete</v-btn
+      >
+      <v-btn
+        v-if="
+          (store.state.user.role === 'admin' ||
+            store.state.user.id === item.owner) &&
+          (reservations || tripHistroy)
+        "
+        color="red"
+        append-icon="mdi-trash-can"
+        variant="outlined"
+        @click="showCancelBooking = !showCancelBooking"
+        >Cancel Booking</v-btn
       >
     </div>
   </v-card>
@@ -96,24 +110,47 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-dialog v-model="showCancelBooking" max-width="500px">
+    <v-card>
+      <v-card-title class="headline">Confirm Cancel Booking</v-card-title>
+      <v-card-text>
+        <p>Are you sure you want to Cancel Booking?</p>
+        <p class="tw-text-red-600 tw-mt-9">
+          Note:-If You Cancel The Booking The Payment Will Be Refuneded Under 15
+          Working Day
+        </p>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="red" variant="text" @click="showCancelBooking = false"
+          >Cancel</v-btn
+        >
+        <v-btn color="red" variant="text" @click="cancelBooking">Delete</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const liked = ref(false);
 const showDialog = ref(false);
+const showCancelBooking = ref(false);
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 const props = defineProps({
   item: Object,
   history: Object,
   reservation: Object,
 });
+
+const tripHistroy = computed(() => route.path.includes(["trip-history"]));
+const reservations = computed(() => route.path.includes(["reservations"]));
 const toggleLike = () => {
   liked.value = !liked.value;
 };
@@ -145,6 +182,10 @@ const deleteProperty = async (propertyId) => {
   if (res && res.response && res.response.message) {
     toast.error("Somthing Wrong Try Again Latter !!");
   }
+};
+
+const cancelBooking = () => {
+  console.log("cancel Booking");
 };
 </script>
 <style scoped>
