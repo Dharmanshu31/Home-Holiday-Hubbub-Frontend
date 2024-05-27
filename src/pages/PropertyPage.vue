@@ -247,11 +247,19 @@
     <div class="tw-min-h-[600px]">
       <div
         class="tw-mt-8 tw-grid md:tw-grid-cols-2 xl:tw-grid-cols-3 tw-gap-8 tw-justify-center"
+        v-if="property.length > 0"
       >
         <HomeCard v-for="(item, i) in property" :item="item" :key="i" />
       </div>
+      <div v-else class="tw-text-center tw-mt-[20%]">
+        <p class="tw-text-xl tw-font-bold">
+          No Data Found For This Filetr !!!!!
+        </p>
+      </div>
+      <Loader v-if="loading" />
     </div>
     <v-pagination
+      v-if="property.length > 0"
       v-model="page"
       :length="Math.ceil(property.length / 10)"
       :total-visible="7"
@@ -271,7 +279,7 @@ import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
 const data = icons.concat(amenities);
-data.unshift({ name: "mdi-earth", text: "All" });
+data.unshift({ name: "mdi-earth", text: "Clear" });
 const iconName = ref("");
 const filterToggle = ref(false);
 const typePlace = ref("");
@@ -285,6 +293,7 @@ const sortDateNew = ref(false);
 const sortDateOld = ref(false);
 const page = ref(1);
 const property = ref([]);
+const loading = ref(false);
 const store = useStore();
 const router = useRouter();
 
@@ -342,9 +351,13 @@ if (route.query.propertyCategory) {
 }
 
 const fetchProperty = async (params) => {
+  loading.value = true;
   const response = await store.dispatch("getFilterProperty", params);
-  // console.log(response);
+  if (route.query.ownerId) {
+    params.owner = route.query.ownerId;
+  }
   property.value = response.data.properties;
+  loading.value = false;
 };
 
 //property near Me
@@ -352,8 +365,10 @@ const propertyNearMe = async () => {
   navigator.geolocation.getCurrentPosition(async (position) => {
     const lat = position.coords.latitude;
     const lag = position.coords.longitude;
+    loading.value = true;
     const response = await store.dispatch("getPropertyNearMe", { lat, lag });
     property.value = response;
+    loading.value = false;
   });
 };
 
@@ -422,7 +437,7 @@ onMounted(() => {
 
 //watch on page and iconName for request
 watch([page, iconName], () => {
-  if (iconName.value === "All") {
+  if (iconName.value === "Clear") {
     delete params.propertyCategory;
     delete params.amenities;
   }
@@ -460,6 +475,7 @@ watch([page, iconName], () => {
 
 //get property by distance
 const filterDistance = async ({ radius, lag, lat }) => {
+  loading.value = true;
   const res = await store.dispatch("getDistancePorperty", {
     radius: radius.value,
     lag: lag.value,
@@ -469,6 +485,7 @@ const filterDistance = async ({ radius, lag, lat }) => {
   if (res && res.response && res.response.data) {
     toast.error("Geolocation is not supported by this browser");
   }
+  loading.value = false;
 };
 </script>
 

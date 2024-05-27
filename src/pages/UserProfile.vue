@@ -69,7 +69,11 @@
                     @click="showDialog = true"
                     >Delete</v-btn
                   >
-                  <v-btn type="submit" color="green" append-icon="mdi-pencil"
+                  <v-btn
+                    :loading="loading"
+                    type="submit"
+                    color="green"
+                    append-icon="mdi-pencil"
                     >Update</v-btn
                   >
                 </div>
@@ -88,7 +92,9 @@
         <v-btn color="red" variant="text" @click="showDialog = false"
           >Cancel</v-btn
         >
-        <v-btn color="red" variant="text" @click="deleteUser">Delete</v-btn>
+        <v-btn :loading="loading" color="red" variant="text" @click="deleteUser"
+          >Delete</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -105,6 +111,8 @@ import "vue3-toastify/dist/index.css";
 
 const store = useStore();
 const router = useRouter();
+
+const loading = ref(false);
 const userData = ref();
 const form = ref();
 const role = ref("");
@@ -163,6 +171,7 @@ watch(userData.value, () => {
 const token = Cookies.get("token");
 
 const deleteUser = async () => {
+  loading.value = true;
   try {
     const res = await axios.delete("user/deleteMe", {
       headers: {
@@ -179,10 +188,12 @@ const deleteUser = async () => {
       toast.error("Somthing wents Wrong Try Again latter");
     }
   }
+  loading.value = false;
 };
 
 const updateUser = async () => {
   if (!(await form.value.validate()).valid) return;
+  loading.value = true;
   const formData = new FormData();
   let hasChanged = false;
   if (
@@ -220,5 +231,6 @@ const updateUser = async () => {
       }
     }
   }
+  loading.value = false;
 };
 </script>

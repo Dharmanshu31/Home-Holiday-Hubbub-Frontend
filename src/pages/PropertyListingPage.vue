@@ -335,7 +335,7 @@
           </div>
 
           <v-btn
-            v-if="store.state.property.oldPropertyData"
+            v-if="property"
             :loading="loading"
             class="tw-mt-10 tw-text-xl"
             color="#f8395a"
@@ -355,16 +355,15 @@
             >CREATE YOUR LISTING</v-btn
           >
           <router-link to="/">
-          <v-btn
-            v-if="store.state.property.oldPropertyData"
-            class="tw-mt-10 md:tw-ml-10 tw-text-xl"
-            color="#f8395a"
-            size="large"
-            rounded="xl"
-            >Cancel Update</v-btn
-          >
-        </router-link>
-
+            <v-btn
+              v-if="property"
+              class="tw-mt-10 md:tw-ml-10 tw-text-xl"
+              color="#f8395a"
+              size="large"
+              rounded="xl"
+              >Cancel Update</v-btn
+            >
+          </router-link>
         </v-form>
       </v-col>
     </v-row>
@@ -379,13 +378,13 @@ import { plases } from "../data";
 import Map from "../components/listingPage/Map.vue";
 import axios from "../store/axios";
 import Cookies from "js-cookie";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useStore } from "vuex";
 
 const store = useStore();
-
+const route = useRoute();
 const router = useRouter();
 const iconClass =
   "filter-border tw-border tw-w-28 tw-h-24 tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
@@ -599,36 +598,45 @@ const createProperty = async () => {
 };
 
 //repacing old data
-const property = store.state.property.oldPropertyData;
-onMounted(() => {
-  if (property) {
-    iconName.value = property.propertyCategory;
-    placeName.value = property.propertyType;
-    lag.value = property.location.coordinates[0];
-    lat.value = property.location.coordinates[1];
-    address.value = property.address;
-    const temp = property.location.formattedAddress.split(",");
-    appartment.value = temp[temp.length - 1];
-    city.value = property.location.city;
-    state.value = property.location.state;
-    zipcode.value = property.location.zipcode;
-    country.value = property.location.country;
-    basics[0].value.value = property.maxGuests;
-    basics[1].value.value = property.bedrooms;
-    basics[2].value.value = property.bed;
-    basics[3].value.value = property.bathrooms;
-    title.value = property.name;
-    description.value = property.description;
-    highlight.value = property.highlight;
-    detailHighlight.value = property.highlightDetail;
-    price.value = property.pricePerNight;
-    amenitie.value = property.amenities;
-    const addPath = property.images.map(
-      (image) => `../../assets/properts/${image}`
-    );
-    imagePriview.value = addPath;
+let property = null;
+onMounted(async () => {
+  if (route.query.propertyId) {
+    const res = await store.dispatch("getOneProperty", route.query.propertyId);
+    if (res.status === 200) {
+      property = res.data;
+      iconName.value = property.propertyCategory;
+      placeName.value = property.propertyType;
+      lag.value = property.location.coordinates[0];
+      lat.value = property.location.coordinates[1];
+      address.value = property.address;
+      const temp = property.location.formattedAddress.split(",");
+      appartment.value = temp[temp.length - 1];
+      city.value = property.location.city;
+      state.value = property.location.state;
+      zipcode.value = property.location.zipcode;
+      country.value = property.location.country;
+      basics[0].value.value = property.maxGuests;
+      basics[1].value.value = property.bedrooms;
+      basics[2].value.value = property.bed;
+      basics[3].value.value = property.bathrooms;
+      title.value = property.name;
+      description.value = property.description;
+      highlight.value = property.highlight;
+      detailHighlight.value = property.highlightDetail;
+      price.value = property.pricePerNight;
+      amenitie.value = property.amenities;
+      const addPath = property.images.map(
+        (image) => `../../assets/properts/${image}`
+      );
+      imagePriview.value = addPath;
+    }
+    if (res && res.response) {
+      toast.error("Somthing Wents Wrong");
+      router.replace("/");
+    }
   }
 });
+
 //adding updated data
 const updatePropertyData = async () => {
   if (!(await form.value.validate()).valid) return;

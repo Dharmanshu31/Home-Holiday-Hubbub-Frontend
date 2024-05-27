@@ -1,7 +1,11 @@
 <template>
   <v-container>
     <v-app-bar color="#024950">
-      <v-app-bar-title class="tw-max-w-fit"
+      <v-app-bar-title class="tw-max-w-fit" v-if="$vuetify.display.smAndDown"
+        ><router-link to="/"
+          ><img alt="HHH" src="../../../../webLogo.png" /></router-link
+      ></v-app-bar-title>
+      <v-app-bar-title class="tw-max-w-fit" v-else
         ><router-link to="/">Holiday Home Hubbub</router-link></v-app-bar-title
       >
       <!-- <v-app-bar-title v-else="$vuetify.display.smAndDown"
@@ -65,14 +69,26 @@
             >All Propertys</router-link
           >
         </v-list-item>
+        <v-list-item v-if="token && decode && decode.role === 'admin'">
+          <router-link
+            class="listHover"
+            :to="{ path: 'property', query: { ownerId: decode.id } }"
+            >Property</router-link
+          >
+        </v-list-item>
         <v-list-item v-if="token && decode">
           <router-link class="listHover" :to="`/wish-list/${decode.id}`"
             >WishList</router-link
           >
         </v-list-item>
-        <v-list-item v-if="token && decode && decode.role !== 'user'">
+        <v-list-item v-if="token && decode && decode.role === 'landlord'">
           <router-link class="listHover" :to="`/reservations/${decode.id}`"
             >Reservation List</router-link
+          >
+        </v-list-item>
+        <v-list-item v-if="token && decode && decode.role === 'admin'">
+          <router-link class="listHover" :to="`/reservations/${decode.id}`"
+            >Reservation List For Admin</router-link
           >
         </v-list-item>
         <v-list-item v-if="token && decode">
@@ -88,7 +104,7 @@
         <v-list-item v-if="token">
           <router-link class="listHover" to="/userProfile">Profile</router-link>
         </v-list-item>
-        <v-list-item v-if="token && decode && decode.role === 'admin'">
+        <v-list-item v-if="token && decode && decode.role !== 'user'">
           <router-link class="listHover" to="/admin">Admin Panel</router-link>
         </v-list-item>
         <v-list-item v-if="token">

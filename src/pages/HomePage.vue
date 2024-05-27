@@ -68,10 +68,14 @@
     </v-row>
   </v-container>
   <div class="tw-mt-8 tw-flex tw-flex-wrap tw-gap-8 tw-justify-center">
-    <div v-for="(item, i) in items" :key="i">
+    <div v-if="items.length > 0" v-for="(item, i) in items" :key="i">
       <HomeCard :item="item" />
     </div>
+    <div v-else>
+      <p class="tw-text-xl tw-font-bold">No Data Available Yet !!!!!</p>
+    </div>
   </div>
+  <Loader v-if="loading" />
   <br />
   <br />
 </template>
@@ -82,15 +86,49 @@ import HomeCard from "../components/HomeCard.vue";
 import Image from "../components/homePage/Image.vue";
 import { cImage } from "../data";
 import { images } from "../data";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 
 const items = ref([]);
 const store = useStore();
+const page = ref(1);
+const limit = ref(10);
+const loading = ref(false);
+
+let params = {
+  page: page.value,
+  limit: limit.value,
+};
+const fatchData = async (params) => {
+  loading.value = true;
+  try {
+    const res = await store.dispatch("getProperty", params);
+    if (res && res.data.properties.length > 0) {
+      items.value.push(...res.data.properties);
+    }
+  } catch (err) {
+    if (err && err.response) {
+      toast.error("Somthing Wents Wrong Refrec Page");
+    }
+  }
+  loading.value = false;
+};
 onMounted(async () => {
-  await store.dispatch("getProperty");
-  items.value = store.state.property.propertys;
+  fatchData(params);
+});
+const fatchNewData = () => {
+  if (
+    window.innerHeight + document.documentElement.scrollTop + 1 >=
+    document.documentElement.scrollHeight
+  ) {
+    params.page = params.page + 1;
+    fatchData(params);
+  }
+};
+watchEffect(() => {
+  window.addEventListener("scroll", fatchNewData);
 });
 </script>
+
 <style scoped>
 :deep(.v-btn--icon.v-btn--size-default) {
   background-color: transparent;

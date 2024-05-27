@@ -11,6 +11,10 @@ import SignUpPage from "../pages/SignUpPage.vue";
 import NotFound from "../pages/NotFound.vue";
 import UserProfile from "../pages/UserProfile.vue";
 import AdminPanal from "../pages/AdminPanal.vue";
+import Cookies from "js-cookie";
+import store from "../store";
+
+const token = Cookies.get("token");
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -22,7 +26,6 @@ export const router = createRouter({
     {
       path: "/property",
       component: PropertyPage,
-      // children: [{ path: ":propertyId", component: PropertyDetailPage }],
     },
     {
       path: "/property/:propertyId",
@@ -32,15 +35,97 @@ export const router = createRouter({
       name: "listProperty",
       path: "/list-property",
       component: PropertyListingPage,
+      beforeEnter(_, _2, next) {
+        if (token && store.state.user.role !== "user") {
+          return next();
+        } else {
+          next("/");
+        }
+      },
     },
-    { path: "/trip-history/:userId", component: PropertyHistoryPage },
-    { path: "/wish-list/:userId", component: WishListPage },
-    { path: "/reservations/:ownerId", component: ReservationPage },
-    { path: "/login", component: LoginPage },
-    { path: "/signUp", component: SignUpPage },
-    { path: "/userProfile", component: UserProfile },
-    { path: "/admin", component: AdminPanal },
+    {
+      path: "/trip-history/:userId",
+      component: PropertyHistoryPage,
+      beforeEnter(_, _2, next) {
+        if (!token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/wish-list/:userId",
+      component: WishListPage,
+      beforeEnter(_, _2, next) {
+        if (!token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/reservations/:ownerId",
+      component: ReservationPage,
+      beforeEnter(_, _2, next) {
+        if (token && store.state.user.role !== "user") {
+          return next();
+        } else {
+          next("/");
+        }
+      },
+    },
+    {
+      path: "/login",
+      component: LoginPage,
+      beforeEnter(_, _2, next) {
+        if (token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/signUp",
+      component: SignUpPage,
+      beforeEnter(_, _2, next) {
+        if (token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/userProfile",
+      component: UserProfile,
+      beforeEnter(_, _2, next) {
+        if (!token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/admin",
+      component: AdminPanal,
+      beforeEnter(_, _2, next) {
+        if (token && store.state.user.role === "admin") {
+          return next();
+        } else {
+          next("/");
+        }
+      },
+    },
     { path: "/notFound", component: NotFound },
     { path: "/:notFound(.*)", redirect: "/" },
   ],
+  scrollBehavior(_, _2, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else return { left: 0, top: 0 };
+  },
 });

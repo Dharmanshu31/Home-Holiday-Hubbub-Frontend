@@ -10,6 +10,7 @@ import * as directives from "vuetify/directives";
 import { router } from "./router/index";
 import TheHeader from "./layout/ui/TheHeader.vue";
 import TheFooter from "./layout/ui/TheFooter.vue";
+import Loader from "./components/Loader.vue";
 import store from "./store";
 
 const vuetify = createVuetify({
@@ -23,5 +24,6 @@ app.use(router);
 app.use(store);
 app.component("TheHeader", TheHeader);
 app.component("TheFooter", TheFooter);
+app.component("Loader", Loader);
 
 app.mount("#app");

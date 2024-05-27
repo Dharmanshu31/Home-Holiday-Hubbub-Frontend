@@ -3,9 +3,7 @@ import axios from "../axios";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
 interface State {
-  propertys: Property[];
   like: boolean;
-  oldPropertyData: Property;
 }
 interface Property {
   _id: string;
@@ -43,27 +41,17 @@ interface Property {
 export default {
   state(): State {
     return {
-      propertys: [],
       like: false,
-      oldPropertyData: null,
     };
-  },
-  mutations: {
-    //set property
-    getPoperty(state: State, data: Property[]): void {
-      state.propertys = data;
-    },
-
-    setOldPropertyData(state: State, oldData: Property) {
-      state.oldPropertyData = oldData;
-    },
   },
   actions: {
     //fetch all propertys
-    async getProperty({ commit }: { commit: Commit }) {
+    async getProperty({ commit }: { commit: Commit }, { page, limit }) {
       try {
-        const response = await axios.get("property");
-        commit("getPoperty", response.data.properties);
+        const response = await axios.get("property", {
+          params: { page, limit },
+        });
+        return response;
       } catch (err) {
         return err;
       }
@@ -92,11 +80,12 @@ export default {
     //add like
     async likeTheProperty(_, propertyId: string) {
       try {
-        await axios.post(`user/wishList/${propertyId}`, _, {
+        const res = await axios.post(`user/wishList/${propertyId}`, _, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        return res;
       } catch (err) {
         return err;
       }
@@ -184,6 +173,22 @@ export default {
             }
           );
           return response.data;
+        }
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //cancel and refund booking
+    async refundBooking(_, bookingId: string) {
+      try {
+        if (token) {
+          const response = await axios.delete(`booking/${bookingId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          return response;
         }
       } catch (err) {
         return err;

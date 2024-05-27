@@ -56,16 +56,19 @@
       </v-card-text>
     </router-link>
     <div class="tw-justify-between tw-flex tw-mx-8 tw-my-4">
-      <v-btn
-        v-if="
-          store.state.user.role === 'admin' ||
-          store.state.user.id === item.owner
-        "
-        color="green"
-        append-icon="mdi-pencil"
-        variant="text"
-        @click="sendOldData(item)"
-        >Edit</v-btn
+      <router-link
+        :to="{ path: 'list-property', query: { propertyId: item._id } }"
+      >
+        <v-btn
+          v-if="
+            store.state.user.role === 'admin' ||
+            store.state.user.id === item.owner
+          "
+          color="green"
+          append-icon="mdi-pencil"
+          variant="text"
+          >Edit</v-btn
+        ></router-link
       >
       <v-btn
         v-if="
@@ -89,7 +92,7 @@
         color="red"
         append-icon="mdi-emoticon-sad"
         variant="outlined"
-        @click="showCancelBooking = !showCancelBooking"
+        @click="toggleCancelBook()"
         >Cancel Booking</v-btn
       >
     </div>
@@ -125,7 +128,7 @@
         <v-btn color="red" variant="text" @click="showCancelBooking = false"
           >Cancel</v-btn
         >
-        <v-btn color="red" variant="text" @click="cancelBooking"
+        <v-btn color="red" variant="text" @click="cancelBooking(history._id)"
           >Refuned Booking</v-btn
         >
       </v-card-actions>
@@ -139,6 +142,7 @@ import { useStore } from "vuex";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useRoute, useRouter } from "vue-router";
+import Cookies from "js-cookie";
 
 const liked = ref(false);
 const showDialog = ref(false);
@@ -152,29 +156,39 @@ const props = defineProps({
   reservation: Object,
 });
 
+const token = Cookies.get("token");
 const tripHistroy = computed(() => route.path.includes(["trip-history"]));
 const reservations = computed(() => route.path.includes(["reservations"]));
+
 const toggleLike = () => {
-  liked.value = !liked.value;
+  if (token) {
+    liked.value = !liked.value;
+  } else {
+    toast.error("Login to Access This Functionlity");
+  }
 };
 
-const like = (propertyId) => {
-  store.dispatch("likeTheProperty", propertyId);
+const like = async (propertyId) => {
+  if (token) {
+    await store.dispatch("likeTheProperty", propertyId);
+  }
 };
 
-const sendOldData = (item) => {
-  store.commit("setOldPropertyData", item);
-  router.push("list-property");
-};
-
-onMounted(async () => {
+const fetchWishList = async () => {
   const res = await store.dispatch("getWishList", props.item._id);
   liked.value = res;
-  // if(res.response && res.response.data.message){
-  //   toast.error('Login to Get Access')
-  //   // router.replace('/login')
-  // }
+};
+onMounted(async () => {
+  fetchWishList();
 });
+// watch(
+//   () => route.path,
+//   (newPath, oldPath) => {
+//     if (newPath !== oldPath) {
+//       fetchWishList();
+//     }
+//   }
+// );
 
 const deleteProperty = async (propertyId) => {
   const res = await store.dispatch("deleteProperty", propertyId);
@@ -187,10 +201,21 @@ const deleteProperty = async (propertyId) => {
   }
 };
 
-const cancelBooking = () => {
-  console.log("cancel Booking");
+const toggleCancelBook = () => {
+  showCancelBooking.value = !showCancelBooking.value;
+};
+
+const cancelBooking = async (bookingId) => {
+  const res = await store.dispatch("refundBooking", bookingId);
+  if (res.response && res.response.status === 404) {
+    toast.error(res.response.data.message);
+  }
+  if (res.status === 200) {
+    toast.success("Successs You get Youe Refund in 15 working Day");
+  }
 };
 </script>
+
 <style scoped>
 :deep(.slideBtn .v-btn--icon.v-btn--size-default) {
   background-color: white;

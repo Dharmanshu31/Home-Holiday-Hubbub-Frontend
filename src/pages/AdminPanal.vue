@@ -1,5 +1,5 @@
 <template>
-  <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+  <v-parallax class="tw-bg-footer">
     <div class="tw-mt-14">
       <v-slide-group class="tw-m-11">
         <v-slide-group-item>
@@ -85,7 +85,11 @@
                   <v-btn color="red" variant="text" @click="showDialog = false"
                     >Cancel</v-btn
                   >
-                  <v-btn color="red" variant="text" @click="deleteUser()"
+                  <v-btn
+                    :loading="loadingBtn"
+                    color="red"
+                    variant="text"
+                    @click="deleteUser()"
                     >Delete</v-btn
                   >
                 </v-card-actions>
@@ -137,7 +141,11 @@
                     @click="showUpdateDialog = false"
                     >Cancel</v-btn
                   >
-                  <v-btn color="red" variant="text" @click="editUser()"
+                  <v-btn
+                    :loading="loadingBtn"
+                    color="red"
+                    variant="text"
+                    @click="editUser()"
                     >Save</v-btn
                   >
                 </v-card-actions>
@@ -183,6 +191,7 @@ import Cookies from "js-cookie";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 
+const loadingBtn = ref(false);
 const numOFPropertys = ref(0);
 const numOFUser = ref(0);
 const numOFReviews = ref(0);
@@ -291,6 +300,7 @@ const editUser = async () => {
     phone: phone.value,
     role: updateRole.value,
   };
+  loadingBtn.value = true;
   try {
     const res = await axios.patch(`user/admin/${id.value}`, user, {
       headers: {
@@ -306,16 +316,18 @@ const editUser = async () => {
       toast.error("Somthing Wents Wrong Try Again Letter");
     }
   }
+  loadingBtn.value = false;
 };
 
-const deleteUser = async() => {
+const deleteUser = async () => {
+  loadingBtn.value = true;
   try {
     const res = await axios.delete(`user/admin/${id.value}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    if (res.data==='') {
+    if (res.data === "") {
       showDialog.value = false;
       toast.success("User Deleted Successfully");
     }
@@ -324,6 +336,7 @@ const deleteUser = async() => {
       toast.error("Somthing Wents Wrong Try Again Letter");
     }
   }
+  loadingBtn.value = false;
 };
 
 onMounted(() => {
@@ -335,6 +348,6 @@ onMounted(() => {
 
 <style scoped>
 .bgGardiant {
-  background: linear-gradient(to top right, gray, gray, black);
+  background: linear-gradient(to top right, #c1c1c1, gray, #c1c1c1);
 }
 </style>

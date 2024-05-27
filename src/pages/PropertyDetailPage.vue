@@ -5,6 +5,7 @@
         {{ response.name }}
       </h1>
       <div class="tw-flex tw-items-center">
+        <v-btn icon="mdi-share-variant"></v-btn>
         <v-btn
           class="tw-float-right tw-mx-2 tw-my-2"
           :color="like ? '#F56040' : '#000'"
@@ -191,7 +192,11 @@
             @click="postReview(response.id)"
             >Post</v-btn
           >
-          <v-btn v-else color="black" variant="elevated" @click="updateReview(response.id)"
+          <v-btn
+            v-else
+            color="black"
+            variant="elevated"
+            @click="updateReview(response.id)"
             >Update</v-btn
           >
         </v-card-actions>
@@ -255,7 +260,7 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup nonce="<%= nonce %>">
 import { computed, onMounted, ref, watch, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";

@@ -10,14 +10,18 @@
     </v-row>
     <div
       class="tw-mt-8 tw-grid md:tw-grid-cols-2 xl:tw-grid-cols-3 tw-gap-8 tw-justify-center"
+      v-if="items.length > 0"
     >
       <div v-for="(item, i) in items" :key="i">
-        <HomeCard
-          :item="item.propertyId"
-          :history="item"
-        />
+        <HomeCard :item="item.propertyId" :history="item" />
       </div>
     </div>
+    <div v-else class="tw-text-center tw-my-28">
+      <p class="tw-text-xl tw-font-bold">
+        You haven't visited any place yet. Book a place now !!!!!
+      </p>
+    </div>
+    <Loader v-if="loading" />
   </v-container>
 </template>
 
@@ -32,8 +36,10 @@ import "vue3-toastify/dist/index.css";
 
 const store = useStore();
 const items = ref([]);
+const loading = ref(false);
 
 onMounted(async () => {
+  loading.value = true;
   try {
     const token = Cookies.get("token");
     const userId = store.state.user.id;
@@ -48,7 +54,6 @@ onMounted(async () => {
       toast.error("Somthing Wents wrong Try Again Latter");
     }
   }
+  loading.value = false;
 });
 </script>
-
-<style></style>

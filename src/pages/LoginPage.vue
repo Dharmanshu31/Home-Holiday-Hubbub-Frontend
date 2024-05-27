@@ -101,14 +101,15 @@ const reset = () => {
 const login = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
-  const loginData={
+  const loginData = {
     email: formData.value.email,
     password: formData.value.password,
-  }
-  const response = await store.dispatch("login",loginData );
+  };
+  const response = await store.dispatch("login", loginData);
   if (response.status === 201) {
     loading.value = false;
-    router.push("/");
+    router.replace("/");
+    window.location.reload()
   }
   if (response.response && response.response.status === 400) {
     toast.error("Invalid Email or Password");
