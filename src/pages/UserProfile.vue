@@ -78,6 +78,12 @@
                   >
                 </div>
               </v-form>
+              <p
+                class="tw-float-right tw-my-4 hover:tw-text-blue-600 hover:tw-underline tw-cursor-pointer"
+                @click="updateDialog = !updateDialog"
+              >
+                update password
+              </p>
             </div>
           </div>
         </div>
@@ -98,6 +104,52 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  <v-dialog v-model="updateDialog" max-width="500px">
+    <v-card>
+      <v-card-title class="headline">Update Password</v-card-title>
+      <v-form ref="updateForm" @submit.prevent="updatepassword">
+        <v-card-text>
+          <div class="tw-m-8">
+            <v-text-field
+              v-model="currentPass"
+              name="current Password"
+              label="Current Password"
+              class="tw-m-4"
+              :rules="[required]"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="newPass"
+              name="password"
+              label="New Password"
+              class="tw-m-4"
+              :rules="[required, passwordRule]"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="confirmPass"
+              name="confirmPassword"
+              label="confirmPassword"
+              type="text"
+              class="tw-m-4"
+              :rules="[required, confirmPasswordRul]"
+            />
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            color="red"
+            variant="text"
+            @click="updateDialog = !updateDialog"
+            >Cancel</v-btn
+          >
+          <v-btn :loading="loading" color="green" variant="text" type="submit"
+            >Update password</v-btn
+          >
+        </v-card-actions>
+      </v-form>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -112,9 +164,14 @@ import "vue3-toastify/dist/index.css";
 const store = useStore();
 const router = useRouter();
 
+const currentPass = ref();
+const newPass = ref();
+const confirmPass = ref();
+const updateDialog = ref(false);
 const loading = ref(false);
 const userData = ref();
 const form = ref();
+const updateForm = ref(null);
 const role = ref("");
 const first = ref("");
 const last = ref("");
@@ -230,6 +287,44 @@ const updateUser = async () => {
         toast.error("Somthing wents Wrong Try Again latter");
       }
     }
+  }
+  loading.value = false;
+};
+//reqired validation
+const required = (value) => !!value || "Field is required !!";
+
+//password validation
+const passwordRule = (value) =>
+  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(
+    value
+  ) ||
+  `Password must have at least 8 characters,including at least one number, one lowercase letter, one uppercase letter, and one special character`;
+
+//confirmPass Validation
+const confirmPasswordRul = (value) => {
+  if (!newPass.value) {
+    return true;
+  }
+  if (value === newPass.value) {
+    return true;
+  } else {
+    return "Passwords do not match";
+  }
+};
+const updatepassword = async () => {
+  if (!(await updateForm.value.validate()).valid) return;
+  loading.value = true;
+  const data = {
+    currentPassword: currentPass.value,
+    password: newPass.value,
+    confirmPassword: confirmPass.value,
+  };
+  const res = await store.dispatch("updatePassword", data);
+  if (res.status === 200) {
+    updateDialog.value = false;
+    toast.success("password Update Successfully");
+  } else if (res.response) {
+    toast.error("Incorrect Current Password");
   }
   loading.value = false;
 };

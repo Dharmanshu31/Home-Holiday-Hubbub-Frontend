@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import { router } from "../../router";
 import axios from "../axios";
 import { ActionContext, Commit } from "vuex";
+const token = Cookies.get("token");
 
 interface formDataObj {
   name: string;
@@ -91,7 +92,6 @@ export default {
     //get me function
     async getUser(context: ActionContext<State, Commit>) {
       try {
-        const token = Cookies.get("token");
         if (token) {
           const response = await axios.get("user/me", {
             headers: {
@@ -111,7 +111,6 @@ export default {
     //get all usre for admin
     async getUserByAdmin(_, query: {}) {
       try {
-        const token = Cookies.get("token");
         if (token) {
           const response = await axios.get("user/admin", {
             headers: {
@@ -120,6 +119,52 @@ export default {
             params: query,
           });
           return response.data;
+        }
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //forget password
+    async forgetPassword(_, email: string) {
+      try {
+        const response = await axios.post("auth/forgetPassword", { email });
+        return response;
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //resetPassword
+    async resetPassword(
+      _,
+      {
+        newPass,
+        confirmPass,
+        resetToken,
+      }: { newPass: string; confirmPass: string; resetToken: string }
+    ) {
+      try {
+        const response = await axios.patch(`auth/resetPassword/${resetToken}`, {
+          password: newPass,
+          confirmPassword: confirmPass,
+        });
+        return response;
+      } catch (err) {
+        return err;
+      }
+    },
+
+    //update password
+    async updatePassword(_, data) {
+      try {
+        if (token) {
+          const response = await axios.patch("user/updatePassword", data, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          return response;
         }
       } catch (err) {
         return err;

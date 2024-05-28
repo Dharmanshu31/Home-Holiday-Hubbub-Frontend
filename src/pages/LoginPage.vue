@@ -34,7 +34,7 @@
                 class="tw-mt-3"
               ></v-text-field>
               <div class="tw-flex tw-justify-end">
-                <router-link to="/login" class="hover:tw-underline"
+                <router-link to="forgetPassword" class="hover:tw-underline"
                   >forgetPassword??</router-link
                 >
               </div>
@@ -109,7 +109,7 @@ const login = async () => {
   if (response.status === 201) {
     loading.value = false;
     router.replace("/");
-    window.location.reload()
+    window.location.reload();
   }
   if (response.response && response.response.status === 400) {
     toast.error("Invalid Email or Password");

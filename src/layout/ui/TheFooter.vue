@@ -13,7 +13,7 @@
     <div class="pt-4 tw-w-full">
       <v-row>
         <v-col class="tw-flex tw-flex-col tw-ml-16">
-          <router-link to="/" class="foot text-lg font-semibold mb-2 tw-w-max"
+          <router-link to="/about-us" class="foot text-lg font-semibold mb-2 tw-w-max"
             >About Us</router-link
           >
           <router-link
@@ -29,9 +29,12 @@
         </v-col>
 
         <v-col class="tw-flex tw-flex-col">
-          <router-link to="/" class="foot text-lg font-semibold mb-2 tw-w-max"
-            >Connect Us</router-link
+          <a
+            href="mailto:support@holidayhomehubbub.com"
+            class="foot text-lg font-semibold mb-2 tw-w-max"
           >
+            Connect Us
+          </a>
           <router-link
             to="/property"
             class="foot text-lg font-semibold mb-2 tw-w-max"

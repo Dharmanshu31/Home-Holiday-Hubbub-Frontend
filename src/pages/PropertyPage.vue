@@ -299,6 +299,10 @@ const router = useRouter();
 
 const iconClass =
   "filter-border tw-border tw-w-[90px] tw-h-14 md:tw-w-[139px] md:tw-h-[71px] tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
+
+//fething filter Date
+const params = reactive({ page: page.value, limit: 10 });
+let hasChange = false;
 const propertyCategoryFilter = (iconText) => {
   if (iconName.value === iconText) {
     iconName.value = "";
@@ -309,6 +313,8 @@ const propertyCategoryFilter = (iconText) => {
 const typeProperty = (propertyTypeName) => {
   if (typePlace.value === propertyTypeName) {
     typePlace.value = "";
+    delete params.propertyType;
+    hasChange = true;
   } else {
     typePlace.value = propertyTypeName;
   }
@@ -316,6 +322,8 @@ const typeProperty = (propertyTypeName) => {
 const setBedroom = (num) => {
   if (bedrooms.value === num || bedrooms.value === 8) {
     bedrooms.value = 0;
+    delete params.bedrooms;
+    hasChange = true;
   } else {
     bedrooms.value = num;
   }
@@ -323,6 +331,8 @@ const setBedroom = (num) => {
 const setBed = (num) => {
   if (beds.value === num || beds.value === 8) {
     beds.value = 0;
+    delete params.bed;
+    hasChange = true;
   } else {
     beds.value = num;
   }
@@ -330,6 +340,8 @@ const setBed = (num) => {
 const setBathroom = (num) => {
   if (bathrooms.value === num || bathrooms.value === 8) {
     bathrooms.value = 0;
+    delete params.bathrooms;
+    hasChange = true;
   } else {
     bathrooms.value = num;
   }
@@ -340,9 +352,6 @@ const isPropertyType = computed(() => {
 const isAmenities = computed(() => {
   return amenities.some((amenitie) => amenitie.text === iconName.value);
 });
-
-//fething filter Date
-const params = reactive({ page: page.value, limit: 10 });
 
 //apply filter from homePage
 const route = useRoute();
@@ -374,9 +383,8 @@ const propertyNearMe = async () => {
 
 //applying filter
 const applyFilter = () => {
-  let hasChange = false;
   if (typePlace.value && typePlace.value !== "") {
-    params.propertyCategory = typePlace.value;
+    params.propertyType = typePlace.value;
     hasChange = true;
   }
   if (bedrooms.value !== 0) {
@@ -412,6 +420,11 @@ const applyFilter = () => {
     hasChange = true;
   }
   if (hasChange) {
+    console.log(params);
+    if (route.query.propertyCategory) {
+      delete params.propertyCategory;
+      router.replace({ query: "" });
+    }
     fetchProperty(params);
   }
   filterToggle.value = false;
@@ -428,6 +441,19 @@ const clearFilter = () => {
   priceDown.value = false;
   sortDateNew.value = false;
   sortDateOld.value = false;
+
+  // Reset params to default values
+  params.page = 1;
+  params.limit = 10;
+  delete params.propertyType;
+  delete params.bedrooms;
+  delete params.bed;
+  delete params.bathrooms;
+  delete params.ratingsAverage;
+  delete params.sort;
+  delete params.createdAt;
+
+  fetchProperty(params);
 };
 
 //fatch data for pagination

@@ -11,6 +11,10 @@ import SignUpPage from "../pages/SignUpPage.vue";
 import NotFound from "../pages/NotFound.vue";
 import UserProfile from "../pages/UserProfile.vue";
 import AdminPanal from "../pages/AdminPanal.vue";
+import ForgetPassword from "../pages/ForgetPassword.vue";
+import ResetPassword from "../pages/ResetPassword.vue";
+import AboutUs from "../pages/AboutUs.vue";
+
 import Cookies from "js-cookie";
 import store from "../store";
 
@@ -119,6 +123,32 @@ export const router = createRouter({
           next("/");
         }
       },
+    },
+    {
+      path: "/forgetPassword",
+      component: ForgetPassword,
+      beforeEnter(_, _2, next) {
+        if (token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/resetPassword/:token",
+      component: ResetPassword,
+      beforeEnter(_, _2, next) {
+        if (token) {
+          return next("/");
+        } else {
+          next();
+        }
+      },
+    },
+    {
+      path: "/about-us",
+      component: AboutUs,
     },
     { path: "/notFound", component: NotFound },
     { path: "/:notFound(.*)", redirect: "/" },

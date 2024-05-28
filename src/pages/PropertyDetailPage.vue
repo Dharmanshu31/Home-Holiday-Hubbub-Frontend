@@ -1,20 +1,85 @@
 <template>
+  <Loader class="tw-mt-24" v-if="loading" />
   <v-container class="tw-mt-12">
     <div class="tw-flex tw-justify-between tw-items-center">
       <h1 class="tw-text-2xl sm:tw-text-4xl tw-font-bold">
         {{ response.name }}
       </h1>
       <div class="tw-flex tw-items-center">
-        <v-btn icon="mdi-share-variant"></v-btn>
+        <v-btn icon="mdi-share-variant" @click="share = !share"></v-btn>
         <v-btn
           class="tw-float-right tw-mx-2 tw-my-2"
           :color="like ? '#F56040' : '#000'"
-          @click="(like = !like), liked(route.params.propertyId)"
+          @click="toggleLike(), liked(route.params.propertyId)"
           :icon="like ? 'mdi-heart' : 'mdi-heart-outline'"
           variant="elevated"
         ></v-btn>
       </div>
     </div>
+    <v-dialog v-model="share" max-width="500">
+      <div class="tw-bg-white tw-p-6">
+        <v-icon icon="mdi-window-close" @click="share = !share"></v-icon>
+        <p class="tw-mt-5 tw-text-xl tw-font-semibold">
+          Share This Property With Friedns And Family
+        </p>
+        <p class="tw-mt-3" v-if="response.ratingsAverage">
+          {{ response.name }} which has rating
+          <v-icon
+            icon="mdi-star"
+            color="#f9a825"
+            v-if="response.ratingsAverage"
+          ></v-icon>
+          {{ response.ratingsAverage }}
+        </p>
+        <p class="tw-mt-3" v-else>
+          {{ response.name }} only in &#x20B9; {{ response.pricePerNight }}
+        </p>
+        <div class="tw-grid tw-grid-cols-2 tw-gap-7 tw-mt-8">
+          <v-btn
+            prepend-icon="mdi-content-copy"
+            variant="outlined"
+            color="gray"
+            @click="sharePorperty('copy')"
+            >Copy</v-btn
+          >
+          <v-btn
+            prepend-icon="mdi-whatsapp"
+            @click="sharePorperty('whatsapp')"
+            variant="outlined"
+            color="green"
+            >whatsapp</v-btn
+          >
+          <v-btn
+            prepend-icon="mdi-facebook"
+            variant="outlined"
+            color="blue"
+            @click="sharePorperty('facebook')"
+            >facebook</v-btn
+          >
+          <v-btn
+            prepend-icon="mdi-twitter"
+            variant="outlined"
+            color="black"
+            @click="sharePorperty('twitter')"
+            >twitter</v-btn
+          >
+          <v-btn
+            prepend-icon="mdi-instagram"
+            variant="outlined"
+            color="pink"
+            @click="sharePorperty('instagram')"
+            >instagram</v-btn
+          >
+          <v-btn
+            prepend-icon="mdi-gmail"
+            variant="outlined"
+            color="red"
+            @click="sharePorperty('gmail')"
+            >Mail</v-btn
+          >
+        </div>
+      </div>
+    </v-dialog>
     <div class="tw-flex tw-flex-wrap tw-gap-3 tw-my-5">
       <v-img
         v-for="(image, i) in response.images"
@@ -153,8 +218,11 @@
       </div>
     </div>
 
-    <hr v-if="token" />
-    <v-btn color="black" @click="reviewModel = !reviewModel" v-if="token"
+    <hr v-if="token && validReview" />
+    <v-btn
+      color="black"
+      @click="reviewModel = !reviewModel"
+      v-if="token && validReview"
       >Add Review</v-btn
     >
     <v-dialog max-width="500px" v-model="reviewModel">
@@ -275,6 +343,8 @@ import axios from "../store/axios";
 import Cookies from "js-cookie";
 
 const router = useRouter();
+const loading = ref(false);
+const share = ref(false);
 const response = ref({});
 const selectedDate = ref([new Date()]);
 const dialog = ref(false);
@@ -292,9 +362,11 @@ const ratings = ref({
   four: 0,
   five: 0,
 });
-
+const validReview = ref(false);
+const token = Cookies.get("token");
 //fatching data and seting value for reviewBar
 onMounted(async () => {
+  loading.value = true;
   const res = await store.dispatch("getOneProperty", route.params.propertyId);
   response.value = res.data;
   if (res.response && res.response.status === 400) {
@@ -319,7 +391,37 @@ onMounted(async () => {
       }
     });
   }
+  if (store.state.user.id !== "") {
+    try {
+      const userId = store.state.user.id;
+      const res = await axios.get(
+        `booking/property/${route.params.propertyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.data.length > 0) {
+        validReview.value = true;
+      }
+    } catch (err) {
+      if (err && err.response) {
+        toast.error("Somthing Wents wrong Try Again Latter");
+      }
+    }
+  }
+  loading.value = false;
 });
+
+//togel like
+const toggleLike = () => {
+  if (token) {
+    like.value = !like.value;
+  } else {
+    toast.error("Login to Access This Functionlity");
+  }
+};
 
 //for showing the like value for wishlist
 const liked = (propertyId) => {
@@ -338,8 +440,6 @@ onMounted(async () => {
     // router.replace('/login')
   }
 });
-
-const token = Cookies.get("token");
 
 //post the review
 const postReview = async (propertyId) => {
@@ -447,6 +547,10 @@ const getAmenityIcon = (amenityText) => {
 
 //show hidde diloage
 const toggaleDialog = () => {
+  if (!token) {
+    toast.error("Login To Book Property");
+    return;
+  }
   dialog.value = !dialog.value;
 };
 
@@ -480,6 +584,42 @@ watch(selectedDate, (newVal) => {
     isHandlingUpdate = false;
   });
 });
+const propertyUrl = "http://localhost:5173" + route.fullPath;
+const sharePorperty = async (appName) => {
+  let shareUrl = "";
+  switch (appName) {
+    case "copy":
+      try {
+        await navigator.clipboard.writeText(propertyUrl);
+        toast.success("URL Copied To Clipboard!");
+      } catch (err) {
+        toast.error("Failed To Copy");
+      }
+      return;
+    case "whatsapp":
+      shareUrl = `https://wa.me/?text=${encodeURIComponent(propertyUrl)}`;
+      break;
+    case "facebook":
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        propertyUrl
+      )}`;
+      break;
+    case "twitter":
+      shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+        propertyUrl
+      )}`;
+      break;
+    case "instagram":
+      shareUrl = `https://www.instagram.com`;
+      break;
+    case "gmail":
+      shareUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&body=${encodeURIComponent(
+        propertyUrl
+      )}`;
+      break;
+  }
+  window.open(shareUrl, "_blank");
+};
 </script>
 
 <style scoped>

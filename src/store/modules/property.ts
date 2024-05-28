@@ -125,17 +125,10 @@ export default {
     //property near me
     async getPropertyNearMe(_, { lat, lag }: { lat: string; lag: string }) {
       try {
-        if (token) {
-          const response = await axios.get(
-            `property/near-me/distance/${lat},${lag}/unit/km`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          return response.data;
-        }
+        const response = await axios.get(
+          `property/near-me/distance/${lat},${lag}/unit/km`
+        );
+        return response.data;
       } catch (err) {
         return err;
       }
@@ -163,17 +156,10 @@ export default {
       { lat, lag, radius }: { lat: string; lag: string; radius: string }
     ) {
       try {
-        if (token) {
-          const response = await axios.get(
-            `property/near-me/distance/${radius}/${lat},${lag}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          return response.data;
-        }
+        const response = await axios.get(
+          `property/near-me/distance/${radius}/${lat},${lag}`
+        );
+        return response.data;
       } catch (err) {
         return err;
       }
