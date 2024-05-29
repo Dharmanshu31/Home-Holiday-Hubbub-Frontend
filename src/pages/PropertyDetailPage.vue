@@ -218,11 +218,19 @@
       </div>
     </div>
 
-    <hr v-if="token && validReview" />
+    <hr
+      v-if="
+        (token && validReview && notOwner) ||
+        (store.state.user.role && store.state.user.role === 'admin')
+      "
+    />
     <v-btn
       color="black"
       @click="reviewModel = !reviewModel"
-      v-if="token && validReview"
+      v-if="
+        (token && validReview && notOwner) ||
+        (store.state.user.role && store.state.user.role === 'admin')
+      "
       >Add Review</v-btn
     >
     <v-dialog max-width="500px" v-model="reviewModel">
@@ -364,6 +372,7 @@ const ratings = ref({
 });
 const validReview = ref(false);
 const token = Cookies.get("token");
+const notOwner = ref(true);
 //fatching data and seting value for reviewBar
 onMounted(async () => {
   loading.value = true;
@@ -371,6 +380,10 @@ onMounted(async () => {
   response.value = res.data;
   if (res.response && res.response.status === 400) {
     router.replace("/notFound");
+  }
+  const userId = store.state.user.id;
+  if (userId && userId === res.data.owner._id) {
+    notOwner.value = false;
   }
   if (response.value.reviews) {
     response.value.reviews.map((review) => {
@@ -393,7 +406,6 @@ onMounted(async () => {
   }
   if (store.state.user.id !== "") {
     try {
-      const userId = store.state.user.id;
       const res = await axios.get(
         `booking/property/${route.params.propertyId}`,
         {

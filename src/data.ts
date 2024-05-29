@@ -68,10 +68,10 @@ export const plases = [
 export const cImage = [
   { src: "/assets/imags/slide.jpg" },
   { src: "/assets/imags/pool_cat.jpg" },
-  { src: "/assets/Listing1/1.jpg" },
+  { src: "/assets/imags/countryside_cat.webp" },
   { src: "/assets/imags/island_cat.webp" },
-  { src: "/assets/Listing1/7.jpg" },
-  { src: "/assets/Listing2/7.jpg " },
+  { src: "/assets/imags/beach_cat.jpg" },
+  { src: "/assets/imags/desert_cat.webp" },
 ];
 
 import {

@@ -372,7 +372,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { amenities } from "../data";
+import { amenities, images } from "../data";
 import { icons } from "../data";
 import { plases } from "../data";
 import Map from "../components/listingPage/Map.vue";
@@ -690,7 +690,6 @@ const updatePropertyData = async () => {
   photos.value.forEach((photo) => {
     formData.append(`images`, photo);
   });
-
   try {
     const response = await axios.patch(`property/${property._id}`, formData, {
       headers: {

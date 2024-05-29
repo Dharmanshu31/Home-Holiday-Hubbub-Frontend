@@ -123,10 +123,16 @@ export default {
     },
 
     //property near me
-    async getPropertyNearMe(_, { lat, lag }: { lat: string; lag: string }) {
+    async getPropertyNearMe(
+      _,
+      { lat, lag, newParam }: { lat: string; lag: string; newParam: {} }
+    ) {
       try {
         const response = await axios.get(
-          `property/near-me/distance/${lat},${lag}/unit/km`
+          `property/near-me/distance/${lat},${lag}/unit/km`,
+          {
+            params: newParam,
+          }
         );
         return response.data;
       } catch (err) {
@@ -153,11 +159,19 @@ export default {
     //distance property distance
     async getDistancePorperty(
       _,
-      { lat, lag, radius }: { lat: string; lag: string; radius: string }
+      {
+        lat,
+        lag,
+        radius,
+        newDisParam,
+      }: { lat: string; lag: string; radius: string; newDisParam: {} }
     ) {
       try {
         const response = await axios.get(
-          `property/near-me/distance/${radius}/${lat},${lag}`
+          `property/near-me/distance/${radius}/${lat},${lag}`,
+          {
+            params: newDisParam,
+          }
         );
         return response.data;
       } catch (err) {

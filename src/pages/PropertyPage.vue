@@ -55,7 +55,7 @@
           prepend-icon="mdi-crosshairs-gps"
           class="tw-mt-9 tw-ml-2"
           variant="outlined"
-          @click="propertyNearMe()"
+          @click="propertyNearMe(newParam)"
           >Near Me</v-btn
         >
         <v-btn
@@ -63,7 +63,7 @@
           icon="mdi-crosshairs-gps"
           class="tw-mt-7"
           variant="text"
-          @click="propertyNearMe()"
+          @click="propertyNearMe(newParam)"
         ></v-btn>
       </div>
     </div>
@@ -261,7 +261,7 @@
     <v-pagination
       v-if="property.length > 0"
       v-model="page"
-      :length="Math.ceil(property.length / 10)"
+      :length="totalProperty"
       :total-visible="7"
       active-color="#024950"
     ></v-pagination>
@@ -292,6 +292,7 @@ const priceDown = ref(false);
 const sortDateNew = ref(false);
 const sortDateOld = ref(false);
 const page = ref(1);
+const totalProperty = ref(1);
 const property = ref([]);
 const loading = ref(false);
 const store = useStore();
@@ -301,8 +302,10 @@ const iconClass =
   "filter-border tw-border tw-w-[90px] tw-h-14 md:tw-w-[139px] md:tw-h-[71px] tw-rounded-xl tw-cursor-pointer tw-flex tw-justify-center tw-items-center tw-flex-col tw-text-[19px]";
 
 //fething filter Date
-const params = reactive({ page: page.value, limit: 10 });
+const params = reactive({ page: page.value, limit: 6 });
 let hasChange = false;
+let isNear = false;
+
 const propertyCategoryFilter = (iconText) => {
   if (iconName.value === iconText) {
     iconName.value = "";
@@ -362,21 +365,26 @@ if (route.query.propertyCategory) {
 const fetchProperty = async (params) => {
   loading.value = true;
   const response = await store.dispatch("getFilterProperty", params);
-  if (route.query.ownerId) {
-    params.owner = route.query.ownerId;
-  }
   property.value = response.data.properties;
+  totalProperty.value = Math.ceil(response.data.total / 6);
   loading.value = false;
 };
 
 //property near Me
-const propertyNearMe = async () => {
+const newParam = reactive({ page: page.value, limit: 6 });
+const propertyNearMe = async (newParam) => {
   navigator.geolocation.getCurrentPosition(async (position) => {
     const lat = position.coords.latitude;
     const lag = position.coords.longitude;
     loading.value = true;
-    const response = await store.dispatch("getPropertyNearMe", { lat, lag });
-    property.value = response;
+    const response = await store.dispatch("getPropertyNearMe", {
+      lat,
+      lag,
+      newParam,
+    });
+    property.value = response[0];
+    totalProperty.value = Math.ceil(response[1][0].total / 6);
+    isNear = true;
     loading.value = false;
   });
 };
@@ -444,7 +452,7 @@ const clearFilter = () => {
 
   // Reset params to default values
   params.page = 1;
-  params.limit = 10;
+  params.limit = 6;
   delete params.propertyType;
   delete params.bedrooms;
   delete params.bed;
@@ -458,11 +466,21 @@ const clearFilter = () => {
 
 //fatch data for pagination
 onMounted(() => {
+  if (route.query.ownerId) {
+    params.owner = route.query.ownerId;
+  }
   fetchProperty(params);
 });
 
 //watch on page and iconName for request
 watch([page, iconName], () => {
+  params.page = page.value;
+  if (isNear) {
+    newParam.page = page.value;
+    propertyNearMe(params);
+    isNear = false;
+    return;
+  }
   if (iconName.value === "Clear") {
     delete params.propertyCategory;
     delete params.amenities;
@@ -484,8 +502,6 @@ watch([page, iconName], () => {
     }
   }
 
-  params.page = page.value;
-
   // Update the route query
   if (params.propertyCategory !== route.query.propertyCategory) {
     const newQuery = { ...route.query };
@@ -502,12 +518,15 @@ watch([page, iconName], () => {
 //get property by distance
 const filterDistance = async ({ radius, lag, lat }) => {
   loading.value = true;
+  const newDisParam = { page: page.value, limit: 6 };
   const res = await store.dispatch("getDistancePorperty", {
     radius: radius.value,
     lag: lag.value,
     lat: lat.value,
+    newDisParam,
   });
-  property.value = res;
+  property.value = res[0];
+  totalProperty.value = Math.ceil(res[1] / 6);
   if (res && res.response && res.response.data) {
     toast.error("Geolocation is not supported by this browser");
   }

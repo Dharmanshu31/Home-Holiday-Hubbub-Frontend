@@ -1,5 +1,9 @@
 <template>
-  <div v-for="(review, i) in reviews" class="tw-flex tw-justify-center">
+  <div
+    v-for="(review, i) in reviews"
+    class="tw-flex tw-justify-center"
+    :key="i"
+  >
     <v-card class="tw-w-[550px] tw-h-[200px]" hover>
       <v-card-text>
         <div class="tw-flex tw-items-center">
@@ -18,6 +22,12 @@
             >
               <span class="tw-text-xs">edit</span></v-btn
             >
+            <v-icon
+              icon="mdi-trash-can"
+              variant="text"
+              color="red"
+              @click="deleteReview(review._id, review.property)"
+            ></v-icon>
           </div>
         </div>
         <div class="tw-flex tw-mt-2">
@@ -60,6 +70,9 @@ import { onMounted, ref } from "vue";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
 import { useStore } from "vuex";
+import Cookies from "js-cookie";
+
+const token = Cookies.get("token");
 const store = useStore();
 const id = ref();
 id.value = store.state.user.id;
@@ -78,6 +91,26 @@ const editreview = (reviewId, rating, review) => {
   const oldReview = { reviewId, rating, review };
   emit("editreview", oldReview);
 };
+
+//delete Review
+const deleteReview = async (reviewId, propertyId) => {
+  try {
+    const res = await axios.delete(
+      `/property/${propertyId}/review/${reviewId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.status === 204) {
+      toast.success("Review Deleted Succefully");
+    }
+  } catch (err) {
+    toast.error("Somthing Went Wrong Try Again Letter");
+  }
+};
+
 onMounted(async () => {
   try {
     const res = await axios.get(

@@ -69,7 +69,7 @@
             >All Propertys</router-link
           >
         </v-list-item>
-        <v-list-item v-if="token && decode && decode.role === 'admin'">
+        <v-list-item v-if="token && decode && decode.role === 'landlord'">
           <router-link
             class="listHover"
             :to="{ path: 'property', query: { ownerId: decode.id } }"
@@ -104,7 +104,7 @@
         <v-list-item v-if="token">
           <router-link class="listHover" to="/userProfile">Profile</router-link>
         </v-list-item>
-        <v-list-item v-if="token && decode && decode.role !== 'user'">
+        <v-list-item v-if="token && decode && decode.role === 'admin'">
           <router-link class="listHover" to="/admin">Admin Panel</router-link>
         </v-list-item>
         <v-list-item v-if="token">

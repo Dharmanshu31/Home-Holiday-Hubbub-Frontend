@@ -62,7 +62,7 @@
         <v-btn
           v-if="
             store.state.user.role === 'admin' ||
-            store.state.user.id === item.owner
+            store.state.user.id === item.owner._id
           "
           color="green"
           append-icon="mdi-pencil"
@@ -72,10 +72,12 @@
       >
       <v-btn
         v-if="
-          (store.state.user.role === 'admin' ||
-            store.state.user.id === item.owner) &&
-          !reservations &&
-          !tripHistroy
+          (store.state.user.role === 'admin' &&
+            !reservations &&
+            !tripHistroy) ||
+          (store.state.user.id === item.owner._id &&
+            !reservations &&
+            !tripHistroy)
         "
         color="red"
         append-icon="mdi-trash-can"
@@ -83,11 +85,14 @@
         @click="showDialog = !showDialog"
         >Delete</v-btn
       >
+
       <v-btn
         v-if="
-          (store.state.user.role === 'admin' ||
-            store.state.user.id === item.owner) &&
-          (reservations || tripHistroy)
+          (store.state.user.role === 'admin' &&
+            (reservations || tripHistroy)) ||
+          (store.state.user.id === item.owner._id &&
+            (reservations || tripHistroy)) ||
+          (history && history.userId === store.state.user.id)
         "
         color="red"
         append-icon="mdi-emoticon-sad"
@@ -159,6 +164,10 @@ const props = defineProps({
 const token = Cookies.get("token");
 const tripHistroy = computed(() => route.path.includes(["trip-history"]));
 const reservations = computed(() => route.path.includes(["reservations"]));
+// const userBook = computed(() => {
+//   if () {
+//   }
+// });
 
 const toggleLike = () => {
   if (token) {

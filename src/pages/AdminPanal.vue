@@ -225,8 +225,8 @@ const headers = ref([
 const fatchUser = async (query) => {
   const res = await store.dispatch("getUserByAdmin", query);
   serverItems.value = res;
-  totalItems.value = res.length;
 };
+
 const query = {};
 const loadItems = ({ page, itemsPerPage, sortBy, search }) => {
   loading.value = true;
@@ -268,6 +268,7 @@ const fatchNumberOfPropertys = async () => {
     },
   });
   numOFPropertys.value = res.data;
+  totalItems.value = numOFUser.value;
 };
 const fatchNumberOfRveiws = async () => {
   const res = await axios.get("property/review/admin/numberOfReviews", {

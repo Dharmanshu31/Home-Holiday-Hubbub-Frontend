@@ -91,7 +91,7 @@ import { onMounted, ref, watchEffect } from "vue";
 const items = ref([]);
 const store = useStore();
 const page = ref(1);
-const limit = ref(10);
+const limit = ref(6);
 const loading = ref(false);
 
 let params = {

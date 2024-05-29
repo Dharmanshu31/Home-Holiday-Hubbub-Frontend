@@ -60,6 +60,7 @@ export default {
         phone: "",
       };
       Cookies.remove("token");
+      router.replace("/");
     },
   },
   actions: {
