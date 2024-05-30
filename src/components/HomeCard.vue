@@ -133,7 +133,11 @@
         <v-btn color="red" variant="text" @click="showCancelBooking = false"
           >Cancel</v-btn
         >
-        <v-btn color="red" variant="text" @click="cancelBooking(history._id)"
+        <v-btn
+          color="red"
+          :loading="loading"
+          variant="text"
+          @click="cancelBooking(history._id)"
           >Refuned Booking</v-btn
         >
       </v-card-actions>
@@ -150,6 +154,7 @@ import { useRoute, useRouter } from "vue-router";
 import Cookies from "js-cookie";
 
 const liked = ref(false);
+const loading = ref(false);
 const showDialog = ref(false);
 const showCancelBooking = ref(false);
 const store = useStore();
@@ -164,10 +169,6 @@ const props = defineProps({
 const token = Cookies.get("token");
 const tripHistroy = computed(() => route.path.includes(["trip-history"]));
 const reservations = computed(() => route.path.includes(["reservations"]));
-// const userBook = computed(() => {
-//   if () {
-//   }
-// });
 
 const toggleLike = () => {
   if (token) {
@@ -190,14 +191,6 @@ const fetchWishList = async () => {
 onMounted(async () => {
   fetchWishList();
 });
-// watch(
-//   () => route.path,
-//   (newPath, oldPath) => {
-//     if (newPath !== oldPath) {
-//       fetchWishList();
-//     }
-//   }
-// );
 
 const deleteProperty = async (propertyId) => {
   const res = await store.dispatch("deleteProperty", propertyId);
@@ -215,13 +208,17 @@ const toggleCancelBook = () => {
 };
 
 const cancelBooking = async (bookingId) => {
+  loading.value = true;
   const res = await store.dispatch("refundBooking", bookingId);
   if (res.response && res.response.status === 404) {
     toast.error(res.response.data.message);
+    loading.value = false;
   }
   if (res.status === 200) {
     toast.success("Successs You get Youe Refund in 15 working Day");
+    loading.value = false;
   }
+  loading.value = false;
 };
 </script>
 
