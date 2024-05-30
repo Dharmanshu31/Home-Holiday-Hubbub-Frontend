@@ -1,5 +1,99 @@
 <template>
   <div class="tw-mt-20 tw-mb-5">
+    <v-slide-group
+      class="tw-m-11"
+      v-if="role !== 'user' && $vuetify.display.smAndDown"
+    >
+      <v-slide-group-item>
+        <v-card
+          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+          elevation="10"
+        >
+          <div class="tw-text-2xl tw-m-3 tw-text-green-900">
+            <v-icon icon="mdi-cash"></v-icon>
+          </div>
+          <div class="tw-text-xl tw-font-bold tw-text-second">
+            Earning Per Month
+          </div>
+          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+            &#x20B9; {{ perMonth }}
+          </div>
+        </v-card>
+        <v-card
+          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+          elevation="10"
+        >
+          <div class="tw-text-2xl tw-m-3 tw-text-green-900">
+            <v-icon icon="mdi-cash-multiple"></v-icon>
+          </div>
+          <div class="tw-text-xl tw-font-bold tw-text-second">
+            Earning Per Year
+          </div>
+          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+            &#x20B9; {{ perYear }}
+          </div>
+        </v-card>
+        <v-card
+          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+          elevation="10"
+        >
+          <div class="tw-text-2xl tw-m-3 tw-text-green-900">
+            <v-icon icon="mdi-bag-checked"></v-icon>
+          </div>
+          <div class="tw-text-xl tw-font-bold tw-text-second">
+            Earning Of lifeTime
+          </div>
+          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+            &#x20B9; {{ lifeTime }}
+          </div>
+        </v-card>
+      </v-slide-group-item>
+    </v-slide-group>
+    <div class="tw-flex tw-justify-center" v-if="$vuetify.display.mdAndUp">
+      <v-card
+        class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+        elevation="10"
+      >
+        <div class="tw-text-2xl tw-m-3 tw-text-green-900">
+          <v-icon icon="mdi-cash"></v-icon>
+        </div>
+        <div class="tw-text-xl tw-font-bold tw-text-second">
+          Earning Per Month
+        </div>
+        <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+          &#x20B9; {{ perMonth }}
+        </div>
+      </v-card>
+      <v-card
+        class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+        elevation="10"
+      >
+        <div class="tw-text-2xl tw-m-3 tw-text-green-900">
+          <v-icon icon="mdi-cash-multiple"></v-icon>
+        </div>
+        <div class="tw-text-xl tw-font-bold tw-text-second">
+          Earning Per Year
+        </div>
+        <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+          &#x20B9; {{ perYear }}
+        </div>
+      </v-card>
+      <v-card
+        class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+        elevation="10"
+      >
+        <div class="tw-text-2xl tw-m-3 tw-text-green-900">
+          <v-icon icon="mdi-bag-checked"></v-icon>
+        </div>
+        <div class="tw-text-xl tw-font-bold tw-text-second">
+          Earning Of lifeTime
+        </div>
+        <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+          &#x20B9; {{ lifeTime }}
+        </div>
+      </v-card>
+    </div>
+
     <div class="tw-flex tw-justify-center tw-text-center">
       <v-card class="tw-min-w-[400px] tw-min-h-[640px]" elevation="15">
         <div class="tw-flex tw-justify-center tw-h-[85%]">
@@ -180,6 +274,10 @@ const phone = ref("");
 const showDialog = ref(false);
 const updateProfileImg = ref(null);
 const previewProfileImg = ref(null);
+const perMonth = ref(0);
+const perYear = ref(0);
+const lifeTime = ref(0);
+
 const profileImage = (e) => {
   const file = e.target.files[0];
   updateProfileImg.value = file;
@@ -328,4 +426,39 @@ const updatepassword = async () => {
   }
   loading.value = false;
 };
+
+//owner earning
+const totalEarning = async () => {
+  try {
+    const res = await axios.get(
+      `booking/owner/${store.state.user.id}/earning`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    if (res.status === 200) {
+      perMonth.value = res.data.currentMonth;
+      perYear.value = res.data.currentYear;
+      lifeTime.value = res.data.lifetime;
+    }
+  } catch (err) {
+    if (err.response && err.response.data) {
+      toast.error("Somthing wents Wrong Try Again latter");
+    }
+  }
+};
+
+onMounted(() => {
+  if (role.value !== "user") {
+    totalEarning();
+  }
+});
 </script>
+
+<style scoped>
+.bgGardiant {
+  background: linear-gradient(to top right, #c1c1c1, gray, #c1c1c1);
+}
+</style>

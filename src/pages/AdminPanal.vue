@@ -1,7 +1,7 @@
 <template>
   <v-parallax class="tw-bg-footer">
     <div class="tw-mt-14">
-      <v-slide-group class="tw-m-11">
+      <v-slide-group class="tw-m-11" v-if="$vuetify.display.smAndDown">
         <v-slide-group-item>
           <v-card
             class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
@@ -47,6 +47,51 @@
           </v-card>
         </v-slide-group-item>
       </v-slide-group>
+
+      <div class="tw-flex tw-justify-center" v-if="$vuetify.display.mdAndUp">
+        <v-card
+          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+          elevation="10"
+        >
+          <div class="tw-text-2xl tw-m-3 tw-text-blue-700">
+            <v-icon icon="mdi-account-group"></v-icon>
+          </div>
+          <div class="tw-text-xl tw-font-bold tw-text-second">
+            NUMBER'S OF USERS
+          </div>
+          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+            {{ numOFUser }}
+          </div>
+        </v-card>
+        <v-card
+          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+          elevation="10"
+        >
+          <div class="tw-text-2xl tw-m-3 tw-text-lime-800">
+            <v-icon icon="mdi-shield-home"></v-icon>
+          </div>
+          <div class="tw-text-xl tw-font-bold tw-text-second">
+            NUMBER'S OF PROPERTYS
+          </div>
+          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+            {{ numOFPropertys }}
+          </div>
+        </v-card>
+        <v-card
+          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
+          elevation="10"
+        >
+          <div class="tw-text-2xl tw-m-3 tw-text-yellow-600">
+            <v-icon icon="mdi-star"></v-icon>
+          </div>
+          <div class="tw-text-xl tw-font-bold tw-text-second">
+            NUMBER'S OF REVIEWS
+          </div>
+          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
+            {{ numOFReviews }}
+          </div>
+        </v-card>
+      </div>
 
       <div class="tw-m-8">
         <div class="tw-m-5 tw-text-2xl tw-font-bold tw-text-center">

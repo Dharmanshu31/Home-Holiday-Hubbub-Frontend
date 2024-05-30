@@ -20,9 +20,9 @@ const customIcon = L.icon({
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
+
 onMounted(() => {
   map.value = L.map(map.value).setView([props.lagLat[1], props.lagLat[0]], 13);
-
   L.tileLayer("https://tile.openstreetmap.de/{z}/{x}/{y}.png?lang=en", {
     maxZoom: 19,
   }).addTo(map.value);
@@ -31,7 +31,3 @@ onMounted(() => {
   }).addTo(map.value);
 });
 </script>
-
-<style>
-/* Add any additional styling here */
-</style>

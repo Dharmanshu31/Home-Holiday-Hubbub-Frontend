@@ -80,13 +80,22 @@
         </div>
       </div>
     </v-dialog>
-    <div class="tw-flex tw-flex-wrap tw-gap-3 tw-my-5">
-      <v-img
-        v-for="(image, i) in response.images"
-        :src="`../../assets/properts/${image}`"
-        :key="i"
-        class="tw-min-w-72"
-      ></v-img>
+    <div>
+      <div class="tw-flex tw-flex-wrap tw-gap-3 tw-my-5">
+        <v-img
+          v-for="(image, i) in response.images"
+          :src="`../../assets/properts/${image}`"
+          :key="i"
+          class="tw-min-w-72"
+          @click="toggleFullscreen(`../../assets/properts/${image}`)"
+        ></v-img>
+      </div>
+      <v-dialog v-model="fullscreen" hide-overlay class="tw-max-w-[800px]">
+        <v-img
+          :src="fullscreenImage"
+          class="tw-border-gray-950 tw-border-[3px]"
+        ></v-img>
+      </v-dialog>
     </div>
     <h2
       v-if="response.location"
@@ -351,6 +360,8 @@ import axios from "../store/axios";
 import Cookies from "js-cookie";
 
 const router = useRouter();
+const fullscreen = ref(false);
+const fullscreenImage = ref(null);
 const loading = ref(false);
 const share = ref(false);
 const response = ref({});
@@ -373,6 +384,12 @@ const ratings = ref({
 const validReview = ref(false);
 const token = Cookies.get("token");
 const notOwner = ref(true);
+
+const toggleFullscreen = (imgPath) => {
+  fullscreenImage.value = imgPath;
+  fullscreen.value = !fullscreen.value;
+};
+
 //fatching data and seting value for reviewBar
 onMounted(async () => {
   loading.value = true;

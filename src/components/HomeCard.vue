@@ -57,7 +57,7 @@
     </router-link>
     <div class="tw-justify-between tw-flex tw-mx-8 tw-my-4">
       <router-link
-        :to="{ path: 'list-property', query: { propertyId: item._id } }"
+        :to="{ path: '/list-property', query: { propertyId: item._id } }"
       >
         <v-btn
           v-if="
@@ -88,8 +88,8 @@
 
       <v-btn
         v-if="
-          (store.state.user.role === 'admin' &&
-            (reservations || tripHistroy)) ||
+          // (store.state.user.role === 'admin' &&
+          //   (reservations || tripHistroy)) ||
           (store.state.user.id === item.owner._id &&
             (reservations || tripHistroy)) ||
           (history && history.userId === store.state.user.id)

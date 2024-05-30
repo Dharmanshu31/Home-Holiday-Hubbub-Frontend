@@ -55,7 +55,7 @@
         class="tw-flex tw-justify-center tw-gap-2"
         style="padding: 50px 0"
         ><router-link
-          :to="{ path: 'property', query: { propertyCategory: image.text } }"
+          :to="{ path: '/property', query: { propertyCategory: image.text } }"
         >
           <Image
             :image="image.image"
@@ -87,6 +87,7 @@ import Image from "../components/homePage/Image.vue";
 import { cImage } from "../data";
 import { images } from "../data";
 import { onMounted, ref, watchEffect } from "vue";
+import debounce from "lodash.debounce";
 
 const items = ref([]);
 const store = useStore();
@@ -98,7 +99,9 @@ let params = {
   page: page.value,
   limit: limit.value,
 };
-const fatchData = async (params) => {
+
+const fetchData = async (params) => {
+  if (loading.value) return;
   loading.value = true;
   try {
     const res = await store.dispatch("getProperty", params);
@@ -113,19 +116,22 @@ const fatchData = async (params) => {
   loading.value = false;
 };
 onMounted(async () => {
-  fatchData(params);
+  await fetchData(params);
 });
-const fatchNewData = () => {
+
+const fetchNewData = debounce(async () => {
   if (
     window.innerHeight + document.documentElement.scrollTop + 1 >=
     document.documentElement.scrollHeight
   ) {
-    params.page = params.page + 1;
-    fatchData(params);
+    page.value += 1;
+    params.page = page.value;
+    await fetchData(params);
   }
-};
+}, 200);
+
 watchEffect(() => {
-  window.addEventListener("scroll", fatchNewData);
+  window.addEventListener("scroll", fetchNewData);
 });
 </script>
 

@@ -34,7 +34,7 @@
                 class="tw-mt-3"
               ></v-text-field>
               <div class="tw-flex tw-justify-end">
-                <router-link to="forgetPassword" class="hover:tw-underline"
+                <router-link to="/forgetPassword" class="hover:tw-underline"
                   >forgetPassword??</router-link
                 >
               </div>

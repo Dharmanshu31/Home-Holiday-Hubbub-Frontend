@@ -17,6 +17,7 @@
     "jwt-decode": "^4.0.0",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
+    "lodash.debounce": "^4.0.8",
     "volar-service-vetur": "^0.0.34",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",

@@ -518,7 +518,7 @@ watch([page, iconName], () => {
 //get property by distance
 const filterDistance = async ({ radius, lag, lat }) => {
   loading.value = true;
-  const newDisParam = { page: page.value, limit: 6 };
+  const newDisParam = { page: page.value, limit: 16 };
   const res = await store.dispatch("getDistancePorperty", {
     radius: radius.value,
     lag: lag.value,
@@ -527,6 +527,7 @@ const filterDistance = async ({ radius, lag, lat }) => {
   });
   property.value = res[0];
   totalProperty.value = Math.ceil(res[1] / 6);
+  totalProperty.value = 1;
   if (res && res.response && res.response.data) {
     toast.error("Geolocation is not supported by this browser");
   }
