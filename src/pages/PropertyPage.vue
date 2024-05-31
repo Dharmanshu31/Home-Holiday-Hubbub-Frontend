@@ -306,7 +306,7 @@ const params = reactive({ page: page.value, limit: 6 });
 let hasChange = false;
 let isNear = false;
 
-//add filter for category 
+//add filter for category
 const propertyCategoryFilter = (iconText) => {
   if (iconName.value === iconText) {
     iconName.value = "";
@@ -440,7 +440,6 @@ const applyFilter = () => {
     hasChange = true;
   }
   if (hasChange) {
-    console.log(params);
     if (route.query.propertyCategory) {
       delete params.propertyCategory;
       router.replace({ query: "" });
@@ -472,8 +471,8 @@ const clearFilter = () => {
   delete params.ratingsAverage;
   delete params.sort;
   delete params.createdAt;
-
   fetchProperty(params);
+  page.value = 1;
 };
 
 //fatch data for pagination
@@ -496,11 +495,16 @@ watch([page, iconName], () => {
   if (iconName.value === "Clear") {
     delete params.propertyCategory;
     delete params.amenities;
+    clearFilter();
+    return;
   }
+
   if (isPropertyType.value || iconName.value === "") {
     if (iconName.value !== "") {
       params.propertyCategory = iconName.value;
       delete params.amenities;
+      params.page = 1;
+      page.value = 1;
     } else {
       delete params.propertyCategory;
     }
@@ -509,6 +513,8 @@ watch([page, iconName], () => {
     if (iconName.value !== "") {
       params.amenities = iconName.value;
       delete params.propertyCategory;
+      params.page = 1;
+      page.value = 1;
     } else {
       delete params.amenities;
     }
