@@ -17,6 +17,8 @@ const props = defineProps({
 });
 const elevated = ref(0);
 
+
+//show allow dates
 const allowDate = (date) => {
   const currentDate = new Date(date);
   // Get today's date

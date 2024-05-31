@@ -53,6 +53,8 @@ const emailRule = (value) =>
   /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
   "Email must be a valid email address";
 
+
+//send token mail for user
 const sendMail = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;

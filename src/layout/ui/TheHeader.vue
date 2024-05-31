@@ -167,6 +167,8 @@ if (token) {
   decode.value = jwtDecode(token);
   store.commit("setUser", { id: decode.value.id, role: decode.value.role });
 }
+
+//get current user
 const getUser = async () => {
   const res = await store.dispatch("getUser");
   if (res && res.response && res.response.status === 401) {

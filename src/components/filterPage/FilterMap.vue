@@ -28,6 +28,8 @@ const radius = ref();
 const lag = ref();
 const lat = ref();
 
+
+//filter map 
 onMounted(() => {
   const initializeMap = () => {
     const mapElement = map.value;
@@ -40,6 +42,7 @@ onMounted(() => {
       maxZoom: 19,
     }).addTo(leafletMap);
 
+    //drwaning circal edit tools
     const drawnItems = new L.FeatureGroup();
     leafletMap.addLayer(drawnItems);
 
@@ -81,6 +84,8 @@ onMounted(() => {
     initializeMap();
   }, 100);
 });
+
+//get current lat and lng
 const getCurrentLocation = () => {
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -92,6 +97,8 @@ const getCurrentLocation = () => {
     toast.error("Geolocation is not supported by this browser.");
   }
 };
+
+//emit map data the data
 watch(radius, () => {
   emit("logAndPosition", { radius, lat, lag });
 });

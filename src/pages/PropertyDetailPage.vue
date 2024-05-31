@@ -385,6 +385,7 @@ const validReview = ref(false);
 const token = Cookies.get("token");
 const notOwner = ref(true);
 
+//show priview img diloag
 const toggleFullscreen = (imgPath) => {
   fullscreenImage.value = imgPath;
   fullscreen.value = !fullscreen.value;
@@ -613,6 +614,8 @@ watch(selectedDate, (newVal) => {
     isHandlingUpdate = false;
   });
 });
+
+//share property link
 const propertyUrl = "http://localhost:5173" + route.fullPath;
 const sharePorperty = async (appName) => {
   let shareUrl = "";

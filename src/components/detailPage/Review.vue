@@ -82,6 +82,8 @@ const props = defineProps({
 const emit = defineEmits(["editreview"]);
 const reviews = ref([]);
 const limit = ref(6);
+
+//add more review
 const addMore = () => {
   limit.value += 6;
 };
@@ -111,6 +113,7 @@ const deleteReview = async (reviewId, propertyId) => {
   }
 };
 
+//fatch review
 onMounted(async () => {
   try {
     const res = await axios.get(

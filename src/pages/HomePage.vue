@@ -100,6 +100,7 @@ let params = {
   limit: limit.value,
 };
 
+//fatch property data
 const fetchData = async (params) => {
   if (loading.value) return;
   loading.value = true;
@@ -119,6 +120,7 @@ onMounted(async () => {
   await fetchData(params);
 });
 
+//fatch data on virtual scroll
 const fetchNewData = debounce(async () => {
   if (
     window.innerHeight + document.documentElement.scrollTop + 1 >=
@@ -130,6 +132,7 @@ const fetchNewData = debounce(async () => {
   }
 }, 200);
 
+//fire when scroll happen
 watchEffect(() => {
   window.addEventListener("scroll", fetchNewData);
 });

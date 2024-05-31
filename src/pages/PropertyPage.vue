@@ -306,6 +306,7 @@ const params = reactive({ page: page.value, limit: 6 });
 let hasChange = false;
 let isNear = false;
 
+//add filter for category 
 const propertyCategoryFilter = (iconText) => {
   if (iconName.value === iconText) {
     iconName.value = "";
@@ -313,6 +314,8 @@ const propertyCategoryFilter = (iconText) => {
     iconName.value = iconText;
   }
 };
+
+//add filter for type
 const typeProperty = (propertyTypeName) => {
   if (typePlace.value === propertyTypeName) {
     typePlace.value = "";
@@ -322,6 +325,8 @@ const typeProperty = (propertyTypeName) => {
     typePlace.value = propertyTypeName;
   }
 };
+
+//add bedroom data
 const setBedroom = (num) => {
   if (bedrooms.value === num || bedrooms.value === 8) {
     bedrooms.value = 0;
@@ -331,6 +336,8 @@ const setBedroom = (num) => {
     bedrooms.value = num;
   }
 };
+
+//add bed data
 const setBed = (num) => {
   if (beds.value === num || beds.value === 8) {
     beds.value = 0;
@@ -340,6 +347,8 @@ const setBed = (num) => {
     beds.value = num;
   }
 };
+
+//add bathroom data
 const setBathroom = (num) => {
   if (bathrooms.value === num || bathrooms.value === 8) {
     bathrooms.value = 0;
@@ -349,6 +358,8 @@ const setBathroom = (num) => {
     bathrooms.value = num;
   }
 };
+
+//select current filter of silder
 const isPropertyType = computed(() => {
   return icons.some((item) => item.text === iconName.value);
 });
@@ -362,6 +373,7 @@ if (route.query.propertyCategory) {
   params.propertyCategory = route.query.propertyCategory;
 }
 
+//fatch simple filter data
 const fetchProperty = async (params) => {
   loading.value = true;
   const response = await store.dispatch("getFilterProperty", params);

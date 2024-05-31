@@ -24,6 +24,8 @@ const props = defineProps({
 const map = ref(null);
 let marker = null;
 let emit = defineEmits(["locationSelected"]);
+
+//collect user address
 onMounted(() => {
   map.value = L.map(map.value).setView(
     [props.lat ? props.lat : 21.1702, props.lag ? props.lag : 72.8311],
@@ -46,6 +48,8 @@ onUnmounted(() => {
   }
 });
 
+
+//show marker to the map on selected place
 const onMapClick = (e) => {
   if (!marker) {
     // If marker is not initialized, create a new marker
@@ -127,6 +131,3 @@ const getCurrentLocation = () => {
 };
 </script>
 
-<style>
-/* Add any additional styling here */
-</style>

@@ -267,12 +267,16 @@ const headers = ref([
   { title: "Edit", key: "edit", align: "center", sortable: false },
 ]);
 
+
+//fatch user data by admin
 const fatchUser = async (query) => {
   const res = await store.dispatch("getUserByAdmin", query);
   serverItems.value = res;
 };
 
 const query = {};
+
+//sert the value of query for pagination
 const loadItems = ({ page, itemsPerPage, sortBy, search }) => {
   loading.value = true;
   query.page = page;
@@ -293,11 +297,17 @@ const loadItems = ({ page, itemsPerPage, sortBy, search }) => {
   fatchUser(query);
   loading.value = false;
 };
+
+//chnage the role of user
 watch(role, () => {
   query.role = role.value;
   fatchUser(query);
 });
+
+
 const token = Cookies.get("token");
+
+//count the total user
 const fatchNumberOfUsers = async () => {
   const res = await axios.get("user/admin/numberOfUsers", {
     headers: {
@@ -306,6 +316,8 @@ const fatchNumberOfUsers = async () => {
   });
   numOFUser.value = res.data;
 };
+
+//count the total property
 const fatchNumberOfPropertys = async () => {
   const res = await axios.get("property/admin/numberOfProperty", {
     headers: {
@@ -315,6 +327,8 @@ const fatchNumberOfPropertys = async () => {
   numOFPropertys.value = res.data;
   totalItems.value = numOFUser.value;
 };
+
+//count the total review
 const fatchNumberOfRveiws = async () => {
   const res = await axios.get("property/review/admin/numberOfReviews", {
     headers: {
@@ -324,11 +338,14 @@ const fatchNumberOfRveiws = async () => {
   numOFReviews.value = res.data;
 };
 
+
 const toggleShowDialog = (userId) => {
   id.value = userId;
   showDialog.value = !showDialog.value;
 };
 
+
+//set update user
 const toggleShowUpdateDialog = (user) => {
   showUpdateDialog.value = !showUpdateDialog.value;
   first.value = user.name.split(" ")[0];
@@ -339,6 +356,7 @@ const toggleShowUpdateDialog = (user) => {
   id.value = user._id;
 };
 
+//edit user
 const editUser = async () => {
   const user = {
     name: first.value + " " + last.value,
@@ -365,6 +383,7 @@ const editUser = async () => {
   loadingBtn.value = false;
 };
 
+//delete user
 const deleteUser = async () => {
   loadingBtn.value = true;
   try {

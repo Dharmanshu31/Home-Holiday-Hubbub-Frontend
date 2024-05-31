@@ -427,6 +427,7 @@ const basics = [
   { name: "Bathrooms", value: bathroom, refName: "bathroom" },
 ];
 
+//incress bed and other felied value
 const increment = (field) => {
   switch (field) {
     case "guest":
@@ -444,6 +445,8 @@ const increment = (field) => {
   }
 };
 
+
+//decress filed value for bad and other 
 const decrement = (field) => {
   switch (field) {
     case "guest":
@@ -461,13 +464,17 @@ const decrement = (field) => {
   }
 };
 
+//set type of proeprty
 const setIconeName = (name) => {
   iconName.value = name;
 };
+
+//name of property
 const setPlaceName = (name) => {
   placeName.value = name;
 };
 
+//set amenitie of property
 const setAmenitie = (name) => {
   const index = amenitie.value.indexOf(name);
   if (index !== -1) {
@@ -478,6 +485,8 @@ const setAmenitie = (name) => {
 };
 
 const newPhotos = [];
+
+//show priview image to lister
 const previewImage = () => {
   for (let i = 0; i < photos.value.length; i++) {
     const file = photos.value[i];
@@ -493,11 +502,14 @@ const previewImage = () => {
   }
 };
 
+//remove priview image 
 const removeImage = (index) => {
   imagePriview.value.splice(index, 1);
   photos.value.splice(index, 1);
 };
 
+
+//set location filed by emit of map
 const setLocationFileds = (locationDetails) => {
   address.value = locationDetails.streetAddress;
   city.value = locationDetails.city;
@@ -508,13 +520,20 @@ const setLocationFileds = (locationDetails) => {
   lat.value = locationDetails.lat;
 };
 
+//reqire filed
 const required = (value) => !!value || "Field is required !!";
 
+
+//price rule cant add invalid 
 const priceRule = (value) => Number(value) >= 0 || "Enter valid price!!";
+
+//cant add morethe 15 words to discription
 const descriptionRule = (value) => {
   const words = value.trim().split(/\s+/).length;
   return words > 15 || "Must be more than 15 words.";
 };
+
+//reset all the value of property
 const reset = () => {
   form.value.reset();
   photos.value = [];
@@ -529,7 +548,11 @@ const reset = () => {
   lat.value = 0;
   lag.value = 0;
 };
+
+
 const token = Cookies.get("token");
+
+//create property 
 const createProperty = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
@@ -597,7 +620,7 @@ const createProperty = async () => {
   reset();
 };
 
-//repacing old data
+//repacing old data for edit 
 let property = null;
 onMounted(async () => {
   if (route.query.propertyId) {

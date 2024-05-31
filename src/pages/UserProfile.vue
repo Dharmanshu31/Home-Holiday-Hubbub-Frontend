@@ -278,6 +278,7 @@ const perMonth = ref(0);
 const perYear = ref(0);
 const lifeTime = ref(0);
 
+//show user profile prview
 const profileImage = (e) => {
   const file = e.target.files[0];
   updateProfileImg.value = file;
@@ -308,6 +309,7 @@ const getUser = async () => {
 userData.value = store.state.user.user;
 role.value = store.state.user.role;
 
+//fatch user data
 onMounted(() => {
   getUser();
   first.value = store.state.user.user.name.split(" ")[0];
@@ -317,6 +319,7 @@ onMounted(() => {
   role.value = store.state.user.role;
 });
 
+//watch user update data
 watch(userData.value, () => {
   first.value = userData.value.name.split(" ")[0];
   last.value = userData.value.name.split(" ")[1];
@@ -325,6 +328,7 @@ watch(userData.value, () => {
 });
 const token = Cookies.get("token");
 
+//shoft delete user data
 const deleteUser = async () => {
   loading.value = true;
   try {
@@ -346,6 +350,7 @@ const deleteUser = async () => {
   loading.value = false;
 };
 
+//update user data
 const updateUser = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
@@ -409,6 +414,8 @@ const confirmPasswordRul = (value) => {
     return "Passwords do not match";
   }
 };
+
+//update the password of user
 const updatepassword = async () => {
   if (!(await updateForm.value.validate()).valid) return;
   loading.value = true;

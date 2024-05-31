@@ -31,6 +31,7 @@ const store = useStore();
 const items = ref([]);
 const loading = ref(false);
 
+//fatch wislist data
 onMounted(async () => {
   loading.value = true;
   const res = await store.dispatch("getUserWishList");

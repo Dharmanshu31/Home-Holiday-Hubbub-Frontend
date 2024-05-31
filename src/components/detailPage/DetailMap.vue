@@ -21,6 +21,7 @@ const customIcon = L.icon({
   popupAnchor: [0, -32],
 });
 
+//show map to in detail page
 onMounted(() => {
   map.value = L.map(map.value).setView([props.lagLat[1], props.lagLat[0]], 13);
   L.tileLayer("https://tile.openstreetmap.de/{z}/{x}/{y}.png?lang=en", {

@@ -15,6 +15,8 @@ import TheFooter from "./layout/ui/TheFooter.vue";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 const route = useRoute();
+
+//for deside to show footer and header or not 
 const showHeaderAndFooter = computed(() => {
   return [
     "/login",

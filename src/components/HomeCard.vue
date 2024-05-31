@@ -170,6 +170,7 @@ const token = Cookies.get("token");
 const tripHistroy = computed(() => route.path.includes(["trip-history"]));
 const reservations = computed(() => route.path.includes(["reservations"]));
 
+//like dislike
 const toggleLike = () => {
   if (token) {
     liked.value = !liked.value;
@@ -178,20 +179,25 @@ const toggleLike = () => {
   }
 };
 
+//fatch like data
 const like = async (propertyId) => {
   if (token) {
     await store.dispatch("likeTheProperty", propertyId);
   }
 };
 
+//fatch wishlist
 const fetchWishList = async () => {
   const res = await store.dispatch("getWishList", props.item._id);
   liked.value = res;
 };
+
 onMounted(async () => {
   fetchWishList();
 });
 
+
+//delete property
 const deleteProperty = async (propertyId) => {
   const res = await store.dispatch("deleteProperty", propertyId);
   if (res === "") {
@@ -203,10 +209,12 @@ const deleteProperty = async (propertyId) => {
   }
 };
 
+//show dilog of cancel booking
 const toggleCancelBook = () => {
   showCancelBooking.value = !showCancelBooking.value;
 };
 
+//cancel booking
 const cancelBooking = async (bookingId) => {
   loading.value = true;
   const res = await store.dispatch("refundBooking", bookingId);

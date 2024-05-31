@@ -78,6 +78,8 @@ const confirmPasswordRul = (value) => {
     return "Passwords do not match";
   }
 };
+
+//reset user password
 const resetPass = async () => {
   if (!(await form.value.validate()).valid) return;
   loading.value = true;
