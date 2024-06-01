@@ -20,22 +20,38 @@
     </div>
     <Loader v-if="loading" />
   </v-container>
+  <v-pagination
+    v-model="page"
+    :length="totalPage"
+    :total-visible="7"
+    active-color="#024950"
+  ></v-pagination>
 </template>
 
 <script setup>
 import HomeCard from "../components/HomeCard.vue";
 import { useStore } from "vuex";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 const store = useStore();
 const items = ref([]);
 const loading = ref(false);
+const page = ref(1);
+const totalPage = ref(1);
 
+const fatchWishlist = async () => {
+  loading.value = true;
+  const res = await store.dispatch("getUserWishList", page.value);
+  items.value = res[0].wishList;
+  totalPage.value = Math.ceil(res[1] / 6);
+  loading.value = false;
+};
 //fatch wislist data
 onMounted(async () => {
-  loading.value = true;
-  const res = await store.dispatch("getUserWishList");
-  items.value = res.wishList;
-  loading.value = false;
+  fatchWishlist();
+});
+
+watch(page, () => {
+  fatchWishlist();
 });
 </script>

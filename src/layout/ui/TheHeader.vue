@@ -124,7 +124,7 @@
             >Add Property</router-link
           >
         </v-list-item>
-        <hr v-if="token" />
+        <hr v-if="token && decode && decode.role !== 'user'" />
         <v-list-item v-if="token && decode">
           <router-link class="listHover" :to="`/wish-list/${decode.id}`"
             >WishList</router-link

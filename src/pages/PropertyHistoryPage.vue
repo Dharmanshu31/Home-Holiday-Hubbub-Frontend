@@ -23,12 +23,18 @@
     </div>
     <Loader v-if="loading" />
   </v-container>
+  <v-pagination
+    v-model="page"
+    :length="totalPage"
+    :total-visible="7"
+    active-color="#024950"
+  ></v-pagination>
 </template>
 
 <script setup>
 import HomeCard from "../components/HomeCard.vue";
 import { useStore } from "vuex";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "../store/axios";
 import Cookies from "js-cookie";
 import { toast } from "vue3-toastify";
@@ -37,9 +43,10 @@ import "vue3-toastify/dist/index.css";
 const store = useStore();
 const items = ref([]);
 const loading = ref(false);
+const page = ref(1);
+const totalPage = ref(1);
 
-//fatch user history
-onMounted(async () => {
+const userHistory = async () => {
   loading.value = true;
   try {
     const token = Cookies.get("token");
@@ -48,13 +55,23 @@ onMounted(async () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      params: { page: page.value, limit: 6 },
     });
-    items.value = res.data;
+    items.value = res.data[0];
+    totalPage.value = Math.ceil(res.data[1] / 6);
   } catch (err) {
     if (err && err.response) {
       toast.error("Somthing Wents wrong Try Again Latter");
     }
   }
   loading.value = false;
+};
+//fatch user history
+onMounted(async () => {
+  userHistory();
+});
+
+watch(page, () => {
+  userHistory();
 });
 </script>

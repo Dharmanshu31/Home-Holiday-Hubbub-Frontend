@@ -107,13 +107,14 @@ export default {
       }
     },
     //get user wishlist
-    async getUserWishList() {
+    async getUserWishList(_, page: number) {
       try {
         if (token) {
           const response = await axios.get(`user/wishList`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            params: { page, limit: 6 },
           });
           return response.data;
         }

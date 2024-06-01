@@ -14,18 +14,22 @@
       </div>
     </div>
     <div v-else class="tw-text-center tw-my-28">
-      <p class="tw-text-xl tw-font-bold">
-        No Data Found Add Property To Your WishList !!!!!
-      </p>
+      <p class="tw-text-xl tw-font-bold">No Data Is Booked Yet !!!!!</p>
     </div>
     <Loader v-if="loading" />
   </v-container>
+  <v-pagination
+    v-model="page"
+    :length="totalPage"
+    :total-visible="7"
+    active-color="#024950"
+  ></v-pagination>
 </template>
 
 <script setup>
 import HomeCard from "../components/HomeCard.vue";
 import { useStore } from "vuex";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "../store/axios";
 import Cookies from "js-cookie";
 import { toast } from "vue3-toastify";
@@ -34,39 +38,63 @@ import "vue3-toastify/dist/index.css";
 const store = useStore();
 const items = ref([]);
 const loading = ref(false);
+const page = ref(1);
+const totalPage = ref(1);
 
-//fathc reservation data 
+const ownerReservation = async () => {
+  try {
+    const token = Cookies.get("token");
+    const ownerId = store.state.user.id;
+    const res = await axios.get(`booking/owner/${ownerId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: { page: page.value, limit: 6 },
+    });
+    items.value = res.data[0];
+    totalPage.value = Math.ceil(res.data[1] / 6);
+  } catch (err) {
+    if (err && err.response) {
+      toast.error("Somthing Wents wrong Try Again Latter");
+    }
+  }
+};
+
+const adminResrvation = async () => {
+  try {
+    const token = Cookies.get("token");
+    const res = await axios.get(`booking/admin`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: { page: page.value, limit: 6 },
+    });
+    items.value = res.data[0];
+    totalPage.value = Math.ceil(res.data[1] / 6);
+  } catch (err) {
+    if (err && err.response) {
+      toast.error("Somthing Wents wrong Try Again Latter");
+    }
+  }
+};
+
+//fathc reservation data
 onMounted(async () => {
   loading.value = true;
   if (store.state.user.role !== "admin") {
-    try {
-      const token = Cookies.get("token");
-      const ownerId = store.state.user.id;
-      const res = await axios.get(`booking/owner/${ownerId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      items.value = res.data;
-    } catch (err) {
-      if (err && err.response) {
-        toast.error("Somthing Wents wrong Try Again Latter");
-      }
-    }
+    ownerReservation();
   } else {
-    try {
-      const token = Cookies.get("token");
-      const res = await axios.get(`booking/admin`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      items.value = res.data;
-    } catch (err) {
-      if (err && err.response) {
-        toast.error("Somthing Wents wrong Try Again Latter");
-      }
-    }
+    adminResrvation();
+  }
+  loading.value = false;
+});
+
+watch(page, () => {
+  loading.value = true;
+  if (store.state.user.role !== "admin") {
+    ownerReservation();
+  } else {
+    adminResrvation();
   }
   loading.value = false;
 });
