@@ -1,97 +1,10 @@
 <template>
   <div class="tw-mt-20 tw-mb-5">
-    <v-slide-group
-      class="tw-m-11"
-      v-if="role !== 'user' && $vuetify.display.smAndDown"
+    <div
+      class="tw-max-w-[800px] tw-h-[330px] tw-mx-auto tw-mb-10"
+      v-if="role !== 'user'"
     >
-      <v-slide-group-item>
-        <v-card
-          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-          elevation="10"
-        >
-          <div class="tw-text-2xl tw-m-3 tw-text-green-900">
-            <v-icon icon="mdi-cash"></v-icon>
-          </div>
-          <div class="tw-text-xl tw-font-bold tw-text-second">
-            Earning Per Month
-          </div>
-          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-            &#x20B9; {{ perMonth }}
-          </div>
-        </v-card>
-        <v-card
-          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-          elevation="10"
-        >
-          <div class="tw-text-2xl tw-m-3 tw-text-green-900">
-            <v-icon icon="mdi-cash-multiple"></v-icon>
-          </div>
-          <div class="tw-text-xl tw-font-bold tw-text-second">
-            Earning Per Year
-          </div>
-          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-            &#x20B9; {{ perYear }}
-          </div>
-        </v-card>
-        <v-card
-          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-          elevation="10"
-        >
-          <div class="tw-text-2xl tw-m-3 tw-text-green-900">
-            <v-icon icon="mdi-bag-checked"></v-icon>
-          </div>
-          <div class="tw-text-xl tw-font-bold tw-text-second">
-            Earning Of lifeTime
-          </div>
-          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-            &#x20B9; {{ lifeTime }}
-          </div>
-        </v-card>
-      </v-slide-group-item>
-    </v-slide-group>
-    <div class="tw-flex tw-justify-center" v-if="$vuetify.display.mdAndUp">
-      <v-card
-        class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-        elevation="10"
-      >
-        <div class="tw-text-2xl tw-m-3 tw-text-green-900">
-          <v-icon icon="mdi-cash"></v-icon>
-        </div>
-        <div class="tw-text-xl tw-font-bold tw-text-second">
-          Earning Per Month
-        </div>
-        <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-          &#x20B9; {{ perMonth }}
-        </div>
-      </v-card>
-      <v-card
-        class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-        elevation="10"
-      >
-        <div class="tw-text-2xl tw-m-3 tw-text-green-900">
-          <v-icon icon="mdi-cash-multiple"></v-icon>
-        </div>
-        <div class="tw-text-xl tw-font-bold tw-text-second">
-          Earning Per Year
-        </div>
-        <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-          &#x20B9; {{ perYear }}
-        </div>
-      </v-card>
-      <v-card
-        class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-        elevation="10"
-      >
-        <div class="tw-text-2xl tw-m-3 tw-text-green-900">
-          <v-icon icon="mdi-bag-checked"></v-icon>
-        </div>
-        <div class="tw-text-xl tw-font-bold tw-text-second">
-          Earning Of lifeTime
-        </div>
-        <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-          &#x20B9; {{ lifeTime }}
-        </div>
-      </v-card>
+      <Line :data="data" :options="options" :key="chartKey" />
     </div>
 
     <div class="tw-flex tw-justify-center tw-text-center">
@@ -254,6 +167,55 @@ import axios from "../store/axios";
 import Cookies from "js-cookie";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { Line } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  PointElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const data = ref({
+  labels: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "November",
+    "December",
+  ],
+  datasets: [
+    {
+      label: `EARNING ANALYSIS OF YEAR ${new Date().getFullYear()}`,
+      backgroundColor: "#f87979",
+      data: [],
+    },
+  ],
+});
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+};
 
 const store = useStore();
 const router = useRouter();
@@ -274,9 +236,7 @@ const phone = ref("");
 const showDialog = ref(false);
 const updateProfileImg = ref(null);
 const previewProfileImg = ref(null);
-const perMonth = ref(0);
-const perYear = ref(0);
-const lifeTime = ref(0);
+const chartKey = ref(0);
 
 //show user profile prview
 const profileImage = (e) => {
@@ -446,9 +406,8 @@ const totalEarning = async () => {
       }
     );
     if (res.status === 200) {
-      perMonth.value = res.data.currentMonth;
-      perYear.value = res.data.currentYear;
-      lifeTime.value = res.data.lifetime;
+      data.value.datasets[0].data = res.data;
+      chartKey.value++;
     }
   } catch (err) {
     if (err.response && err.response.data) {
@@ -463,9 +422,3 @@ onMounted(() => {
   }
 });
 </script>
-
-<style scoped>
-.bgGardiant {
-  background: linear-gradient(to top right, #c1c1c1, gray, #c1c1c1);
-}
-</style>

@@ -1,98 +1,9 @@
 <template>
   <v-parallax class="tw-bg-footer">
     <div class="tw-mt-14">
-      <v-slide-group class="tw-m-11" v-if="$vuetify.display.smAndDown">
-        <v-slide-group-item>
-          <v-card
-            class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-            elevation="10"
-          >
-            <div class="tw-text-2xl tw-m-3 tw-text-blue-700">
-              <v-icon icon="mdi-account-group"></v-icon>
-            </div>
-            <div class="tw-text-xl tw-font-bold tw-text-second">
-              NUMBER'S OF USERS
-            </div>
-            <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-              {{ numOFUser }}
-            </div>
-          </v-card>
-          <v-card
-            class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-            elevation="10"
-          >
-            <div class="tw-text-2xl tw-m-3 tw-text-lime-800">
-              <v-icon icon="mdi-shield-home"></v-icon>
-            </div>
-            <div class="tw-text-xl tw-font-bold tw-text-second">
-              NUMBER'S OF PROPERTYS
-            </div>
-            <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-              {{ numOFPropertys }}
-            </div>
-          </v-card>
-          <v-card
-            class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-            elevation="10"
-          >
-            <div class="tw-text-2xl tw-m-3 tw-text-yellow-600">
-              <v-icon icon="mdi-star"></v-icon>
-            </div>
-            <div class="tw-text-xl tw-font-bold tw-text-second">
-              NUMBER'S OF REVIEWS
-            </div>
-            <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-              {{ numOFReviews }}
-            </div>
-          </v-card>
-        </v-slide-group-item>
-      </v-slide-group>
-
-      <div class="tw-flex tw-justify-center" v-if="$vuetify.display.mdAndUp">
-        <v-card
-          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-          elevation="10"
-        >
-          <div class="tw-text-2xl tw-m-3 tw-text-blue-700">
-            <v-icon icon="mdi-account-group"></v-icon>
-          </div>
-          <div class="tw-text-xl tw-font-bold tw-text-second">
-            NUMBER'S OF USERS
-          </div>
-          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-            {{ numOFUser }}
-          </div>
-        </v-card>
-        <v-card
-          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-          elevation="10"
-        >
-          <div class="tw-text-2xl tw-m-3 tw-text-lime-800">
-            <v-icon icon="mdi-shield-home"></v-icon>
-          </div>
-          <div class="tw-text-xl tw-font-bold tw-text-second">
-            NUMBER'S OF PROPERTYS
-          </div>
-          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-            {{ numOFPropertys }}
-          </div>
-        </v-card>
-        <v-card
-          class="bgGardiant tw-w-[300px] tw-h-44 tw-m-4 tw-text-center tw-content-center"
-          elevation="10"
-        >
-          <div class="tw-text-2xl tw-m-3 tw-text-yellow-600">
-            <v-icon icon="mdi-star"></v-icon>
-          </div>
-          <div class="tw-text-xl tw-font-bold tw-text-second">
-            NUMBER'S OF REVIEWS
-          </div>
-          <div class="tw-text-2xl tw-mt-2 tw-text-teal-800 tw-font-extrabold">
-            {{ numOFReviews }}
-          </div>
-        </v-card>
+      <div class="tw-max-w-[800px] tw-h-[330px] tw-mx-auto tw-mb-10">
+        <Pie :data="data" :options="options" :key="chartRef" />
       </div>
-
       <div class="tw-m-8">
         <div class="tw-m-5 tw-text-2xl tw-font-bold tw-text-center">
           All Users Information
@@ -235,11 +146,10 @@ import axios from "../store/axios.ts";
 import Cookies from "js-cookie";
 import { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "vue-chartjs";
 
 const loadingBtn = ref(false);
-const numOFPropertys = ref(0);
-const numOFUser = ref(0);
-const numOFReviews = ref(0);
 const store = useStore();
 const itemsPerPage = ref(10);
 const search = ref("");
@@ -267,6 +177,22 @@ const headers = ref([
   { title: "Edit", key: "edit", align: "center", sortable: false },
 ]);
 
+const chartRef = ref(0);
+ChartJS.register(ArcElement, Tooltip, Legend);
+const data = ref({
+  labels: ["PROPERTY", "USERS", "REVIEWS", "BOOKINGS"],
+  datasets: [
+    {
+      backgroundColor: ["#08abad", "#ff826d", "#fac673", "#4968dd"],
+      data: [1, 1, 1, 1],
+    },
+  ],
+});
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+};
 
 //fatch user data by admin
 const fatchUser = async (query) => {
@@ -304,7 +230,6 @@ watch(role, () => {
   fatchUser(query);
 });
 
-
 const token = Cookies.get("token");
 
 //count the total user
@@ -314,7 +239,8 @@ const fatchNumberOfUsers = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  numOFUser.value = res.data;
+  data.value.datasets[0].data[1] = res.data;
+  chartRef.value++;
 };
 
 //count the total property
@@ -324,8 +250,9 @@ const fatchNumberOfPropertys = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  numOFPropertys.value = res.data;
-  totalItems.value = numOFUser.value;
+  data.value.datasets[0].data[0] = res.data;
+  totalItems.value = res.data;
+  chartRef.value++;
 };
 
 //count the total review
@@ -335,15 +262,25 @@ const fatchNumberOfRveiws = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  numOFReviews.value = res.data;
+  data.value.datasets[0].data[2] = res.data;
+  chartRef.value++;
 };
 
+//count the total booking
+const fatchNumberOfBooking = async () => {
+  const res = await axios.get("booking/admin/numberOfBookings", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  data.value.datasets[0].data[3] = res.data;
+  chartRef.value++;
+};
 
 const toggleShowDialog = (userId) => {
   id.value = userId;
   showDialog.value = !showDialog.value;
 };
-
 
 //set update user
 const toggleShowUpdateDialog = (user) => {
@@ -408,11 +345,6 @@ onMounted(() => {
   fatchNumberOfUsers();
   fatchNumberOfPropertys();
   fatchNumberOfRveiws();
+  fatchNumberOfBooking();
 });
 </script>
-
-<style scoped>
-.bgGardiant {
-  background: linear-gradient(to top right, #c1c1c1, gray, #c1c1c1);
-}
-</style>
