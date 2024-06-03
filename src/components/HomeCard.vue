@@ -137,7 +137,7 @@
           color="red"
           :loading="loading"
           variant="text"
-          @click="cancelBooking(history._id)"
+          @click="cancelBooking(reservation ? reservation._id : history._id)"
           >Refuned Booking</v-btn
         >
       </v-card-actions>
@@ -195,7 +195,6 @@ const fetchWishList = async () => {
 onMounted(async () => {
   fetchWishList();
 });
-
 
 //delete property
 const deleteProperty = async (propertyId) => {
