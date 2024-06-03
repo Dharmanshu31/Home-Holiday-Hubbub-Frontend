@@ -1,20 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "../pages/HomePage.vue";
-import PropertyPage from "../pages/PropertyPage.vue";
-import PropertyDetailPage from "../pages/PropertyDetailPage.vue";
-import PropertyListingPage from "../pages/PropertyListingPage.vue";
-import PropertyHistoryPage from "../pages/PropertyHistoryPage.vue";
-import WishListPage from "../pages/WishListPage.vue";
-import ReservationPage from "../pages/ReservationPage.vue";
-import LoginPage from "../pages/LoginPage.vue";
-import SignUpPage from "../pages/SignUpPage.vue";
-import NotFound from "../pages/NotFound.vue";
-import UserProfile from "../pages/UserProfile.vue";
-import AdminPanal from "../pages/AdminPanal.vue";
-import ForgetPassword from "../pages/ForgetPassword.vue";
-import ResetPassword from "../pages/ResetPassword.vue";
-import AboutUs from "../pages/AboutUs.vue";
-
 import Cookies from "js-cookie";
 import store from "../store";
 
@@ -25,20 +9,20 @@ export const router = createRouter({
   routes: [
     {
       path: "/",
-      component: HomePage,
+      component: () => import("../pages/HomePage.vue"),
     },
     {
       path: "/property",
-      component: PropertyPage,
+      component: () => import("../pages/PropertyPage.vue"),
     },
     {
       path: "/property/:propertyId",
-      component: PropertyDetailPage,
+      component: () => import("../pages/PropertyDetailPage.vue"),
     },
     {
       name: "listProperty",
       path: "/list-property",
-      component: PropertyListingPage,
+      component: () => import("../pages/PropertyListingPage.vue"),
       beforeEnter(_, _2, next) {
         if (token && store.state.user.role !== "user") {
           return next();
@@ -49,7 +33,7 @@ export const router = createRouter({
     },
     {
       path: "/trip-history/:userId",
-      component: PropertyHistoryPage,
+      component: () => import("../pages/PropertyHistoryPage.vue"),
       beforeEnter(_, _2, next) {
         if (!token) {
           return next("/");
@@ -60,7 +44,7 @@ export const router = createRouter({
     },
     {
       path: "/wish-list/:userId",
-      component: WishListPage,
+      component: () => import("../pages/WishListPage.vue"),
       beforeEnter(_, _2, next) {
         if (!token) {
           return next("/");
@@ -71,7 +55,7 @@ export const router = createRouter({
     },
     {
       path: "/reservations/:ownerId",
-      component: ReservationPage,
+      component: () => import("../pages/ReservationPage.vue"),
       beforeEnter(_, _2, next) {
         if (token && store.state.user.role !== "user") {
           return next();
@@ -82,7 +66,7 @@ export const router = createRouter({
     },
     {
       path: "/login",
-      component: LoginPage,
+      component: () => import("../pages/LoginPage.vue"),
       beforeEnter(_, _2, next) {
         if (token) {
           return next("/");
@@ -93,7 +77,7 @@ export const router = createRouter({
     },
     {
       path: "/signUp",
-      component: SignUpPage,
+      component: () => import("../pages/SignUpPage.vue"),
       beforeEnter(_, _2, next) {
         if (token) {
           return next("/");
@@ -104,7 +88,7 @@ export const router = createRouter({
     },
     {
       path: "/userProfile",
-      component: UserProfile,
+      component: () => import("../pages/UserProfile.vue"),
       beforeEnter(_, _2, next) {
         if (!token) {
           return next("/");
@@ -115,7 +99,7 @@ export const router = createRouter({
     },
     {
       path: "/admin",
-      component: AdminPanal,
+      component: () => import("../pages/AdminPanal.vue"),
       beforeEnter(_, _2, next) {
         if (token && store.state.user.role === "admin") {
           return next();
@@ -126,7 +110,7 @@ export const router = createRouter({
     },
     {
       path: "/forgetPassword",
-      component: ForgetPassword,
+      component: () => import("../pages/ForgetPassword.vue"),
       beforeEnter(_, _2, next) {
         if (token) {
           return next("/");
@@ -137,7 +121,7 @@ export const router = createRouter({
     },
     {
       path: "/resetPassword/:token",
-      component: ResetPassword,
+      component: () => import("../pages/ResetPassword.vue"),
       beforeEnter(_, _2, next) {
         if (token) {
           return next("/");
@@ -148,9 +132,9 @@ export const router = createRouter({
     },
     {
       path: "/about-us",
-      component: AboutUs,
+      component: () => import("../pages/AboutUs.vue"),
     },
-    { path: "/notFound", component: NotFound },
+    { path: "/notFound", component: () => import("../pages/NotFound.vue") },
     { path: "/:notFound(.*)", redirect: "/" },
   ],
   scrollBehavior(_, _2, savedPosition) {

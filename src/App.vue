@@ -17,10 +17,10 @@
 </template>
 
 <script setup>
+import { defineAsyncComponent } from "vue";
 import TheHeader from "./layout/ui/TheHeader.vue";
 import TheFooter from "./layout/ui/TheFooter.vue";
-import ChatBot from "./pages/ChatBot.vue";
-
+const ChatBot = defineAsyncComponent(() => import("./pages/ChatBot.vue"));
 import { useRoute } from "vue-router";
 import { computed } from "vue";
 const route = useRoute();
@@ -37,4 +37,4 @@ const showHeaderAndFooter = computed(() => {
 });
 </script>
 
-<style scoped></style>
+
