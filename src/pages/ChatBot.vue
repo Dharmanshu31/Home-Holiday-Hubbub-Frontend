@@ -81,14 +81,20 @@ const formatResponse = (response) => {
   let inYouTubeLinks = false;
 
   lines.forEach((line) => {
-    if (line.includes("Best Places to Visit:")) {
+    if (
+      line.includes("**Best Places to Visit:**") ||
+      line.includes("Best Places to Visit:")
+    ) {
       if (inYouTubeLinks) {
         formattedResponse += "</ul>";
         inYouTubeLinks = false;
       }
       formattedResponse += `<h3>${line}</h3><ul>`;
       inBestPlaces = true;
-    } else if (line.includes("YouTube Links:")) {
+    } else if (
+      line.includes("**YouTube Links:**") ||
+      line.includes("YouTube Links:")
+    ) {
       if (inBestPlaces) {
         formattedResponse += "</ul>";
         inBestPlaces = false;

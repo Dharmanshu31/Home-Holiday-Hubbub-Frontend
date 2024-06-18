@@ -7,7 +7,7 @@
             class="tw-max-w-fit"
             v-if="$vuetify.display.smAndDown"
             ><router-link to="/"
-              ><img alt="HHH" src="../../../../webLogo.png" class="tw-h-36"/></router-link
+              ><img alt="HHH" src="/webLogo.png" class="tw-h-36"/></router-link
           ></v-app-bar-title>
           <v-app-bar-title class="tw-max-w-fit" v-else
             ><router-link to="/" class="title"
